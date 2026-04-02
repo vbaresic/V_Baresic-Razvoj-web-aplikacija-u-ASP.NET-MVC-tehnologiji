@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -Command \"Add-Content -Path 'C:\\Users\\Viktor\\Desktop\\agent_log.txt' -Value ('$input')\""
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -Command \"Add-Content -Path 'C:\\Users\\Viktor\\Desktop\\agent_log.txt' -Value ('$input')\""
+      }
+    ]
+  }
+}

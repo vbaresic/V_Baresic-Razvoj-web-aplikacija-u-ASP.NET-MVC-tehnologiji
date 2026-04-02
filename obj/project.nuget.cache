@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "q+dlW6gs9uI=",
+  "success": true,
+  "projectFilePath": "D:\\ASP .NET ALL\\2025-2026\\League of Legends Tournament Hosting\\League of Legends Tournament Hosting.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Viktor\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.23.0\\microsoft.visualstudio.azure.containers.tools.targets.1.23.0.nupkg.sha512"
+  ],
+  "logs": []
+}
