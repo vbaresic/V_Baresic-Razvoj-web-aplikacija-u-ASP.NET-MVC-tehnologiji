@@ -1,6 +1,19 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Project Notes";
 }
-<h1>@ViewData["Title"]</h1>
+<section class="content-section directory-page-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Support page</p>
+            <h1>@ViewData["Title"]</h1>
+            <p class="section-copy">Keep project notes, release reminders, and evaluator-facing context in one stable location.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Home" asp-action="Index">Back to control room</a>
+        </div>
+    </div>
 
-<p>Use this page to detail your site's privacy policy.</p>
+    <article class="content-card">
+        <p>This page can carry any project notes or submission details you want to keep visible during evaluation.</p>
+    </article>
+</section>

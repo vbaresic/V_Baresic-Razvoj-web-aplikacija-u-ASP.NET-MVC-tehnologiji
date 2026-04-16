@@ -1,16 +1,11 @@
-using League_of_Legends_Tournament_Hosting;
-
-Console.OutputEncoding = System.Text.Encoding.UTF8;
-DataSeeder.Seed();
-Console.ReadKey();
-return;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+League_of_Legends_Tournament_Hosting.DataSeeder.Seed();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

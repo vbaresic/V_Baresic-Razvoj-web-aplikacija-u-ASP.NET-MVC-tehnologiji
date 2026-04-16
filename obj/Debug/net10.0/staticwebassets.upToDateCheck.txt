@@ -1,4 +1,3 @@
-wwwroot\css\site.css
 wwwroot\favicon.ico
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
@@ -61,7 +60,7 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\css\site.css
+wwwroot\css\site.css
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\favicon.ico
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\js\site.js
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
@@ -123,3 +122,4 @@ D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\lib\jquer
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\lib\jquery\LICENSE.txt
+D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\wwwroot\css\site.css

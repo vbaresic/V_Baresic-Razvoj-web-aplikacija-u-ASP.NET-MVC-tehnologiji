@@ -22,6 +22,14 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Coaches/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29hY2hlc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Coaches/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29hY2hlc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -30,12 +38,80 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Managers/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlcnNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Managers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Players/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGxheWVyc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Players/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGxheWVyc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Shared/Components/_Badge.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcX0JhZGdlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Shared/Components/_Breadcrumb.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcX0JyZWFkY3J1bWIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Shared/Components/_Card.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcX0NhcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Shared/Components/_Footer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcX0Zvb3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Shared/Components/_Sidebar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcX1NpZGViYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Sponsors/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3BvbnNvcnNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Sponsors/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3BvbnNvcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Teams/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Teams/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhbXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Tournaments/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudHNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Tournaments/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91cm5hbWVudHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Venues/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudWVzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/Venues/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudWVzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/ASP .NET ALL/2025-2026/League of Legends Tournament Hosting/Views/_ViewImports.cshtml]

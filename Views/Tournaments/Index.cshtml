@@ -1,0 +1,157 @@
+@model IEnumerable<TournamentSpotlightViewModel>
+@{
+    ViewData["Title"] = "Tournaments";
+}
+
+<section class="content-section directory-page-section tournaments-directory-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Directory</p>
+            <h1>@ViewData["Title"]</h1>
+            <p class="section-copy">@ViewData["EntityCount"] tournaments found. Track stage, format, and live status from one operations view.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Venues" asp-action="Index">Check venues</a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <article class="content-card tournament-empty-state" role="status" aria-live="polite">
+            <p class="eyebrow">Directory state</p>
+            <h2>No tournaments available</h2>
+            <p class="section-copy">There are currently no tournaments in the directory. Check back after schedules are published.</p>
+            <a class="section-cta" asp-controller="Home" asp-action="Index">Return to control room</a>
+        </article>
+    }
+    else
+    {
+        <div class="card-grid card-grid--events tournament-listing-grid" role="list" aria-label="Tournament cards">
+            @foreach (var card in Model)
+            {
+                var phaseProgress = card.Status switch
+                {
+                    TournamentStatus.Completed => 100,
+                    TournamentStatus.Cancelled => 10,
+                    TournamentStatus.Ongoing => card.StageNumber switch
+                    {
+                        1 => 35,
+                        2 => 68,
+                        _ => 92
+                    },
+                    _ => card.StageNumber switch
+                    {
+                        1 => 16,
+                        2 => 42,
+                        _ => 70
+                    }
+                };
+
+                <article class="tournament-card tournament-card--listing tournament-card--@card.Status.ToString().ToLowerInvariant()" role="listitem" aria-label="@card.Name card">
+                    <a class="tournament-card__hit-area" href="@card.LinkUrl" aria-label="@card.DetailsAriaLabel"></a>
+                    <div class="tournament-card__glow"></div>
+
+                    @* Zone 1: HEADER (scan-first content) *@
+                    <div class="tournament-card__header">
+                        <div class="tournament-card__icon tournament-card__icon--@card.Type.ToString().ToLowerInvariant()" aria-hidden="true">
+                            @switch (card.Type)
+                            {
+                                case TournamentType.Final:
+                                    <svg viewBox="0 0 24 24"><path d="M7 3h10v3c0 2-1.3 3.8-3.2 4.7.2 1.3.8 2.4 1.9 3.3H8.3c1.1-.9 1.7-2 1.9-3.3C8.3 9.8 7 8 7 6V3zm1 16h8v2H8zm1.6-6h6.8c-.6 1.2-1.6 2.3-3 3.1-.3.2-.7.2-1 0-1.4-.8-2.4-1.9-2.8-3.1zm.4-9v2c0 1.5 1 3 2.4 3.7.2.1.5.1.7 0C14.5 9 15.5 7.5 15.5 6V4H9z" fill="currentColor"/></svg>
+                                    break;
+                                case TournamentType.Semifinal:
+                                case TournamentType.Quarterfinal:
+                                    <svg viewBox="0 0 24 24"><path d="M4 5h6v4H7v2h4v2H7v2H4V5zm10 0h6v12h-6v-2h4V7h-4V5zM9 11h2v2H9z" fill="currentColor"/></svg>
+                                    break;
+                                default:
+                                    <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.3 5.8 2.9L12 11 6.2 8.2zM6 9.7 11 12v5.2L6 14.8zm12 0v5.1L13 17.2V12z" fill="currentColor"/></svg>
+                                    break;
+                            }
+                        </div>
+
+                        <div class="tournament-card__hero">
+                            <p class="entity-card__subtitle">Tournament event</p>
+                            <h3>@card.Name</h3>
+                            <p class="tournament-card__description tournament-card__status-message">@card.StatusStageMessage</p>
+                        </div>
+
+                        <div class="tournament-card__badges">
+                            <span class="badge-pill badge-pill--purple tournament-stage-badge">@card.StageLabel</span>
+                            <span class="tournament-status-badge tournament-status-badge--@card.Status.ToString().ToLowerInvariant()">@card.RegistrationLabel</span>
+                        </div>
+                    </div>
+
+                    @* Zone 2: KEY META (high-value one-line cluster) *@
+                    <div class="tournament-card__inline-meta" aria-label="Tournament details">
+                        <span>@card.DateLabel</span>
+                        <span>
+                            <a class="tournament-inline-link" href="@card.VenueLinkUrl" aria-label="Open @card.VenueLabel venue details">@card.VenueLabel</a>
+                        </span>
+                        <span>@card.TeamCapacityLabel</span>
+                    </div>
+
+                    @* Zone 3: COMPETITION STATE *@
+                    <section class="tournament-card__competition" aria-label="@card.CompetitionAssistiveLabel">
+                        <div class="tournament-card__competition-row">
+                            <p class="tournament-card__supporting tournament-card__competition-label">@card.CompetitionStateLabel</p>
+                            @if (card.IsLiveNow)
+                            {
+                                <span class="tournament-live-indicator" aria-live="polite">Live now</span>
+                            }
+                        </div>
+
+                        @if (card.ShowProgressBar)
+                        {
+                            <div class="tournament-phase" aria-label="Tournament phase progress">
+                                <span class="tournament-phase__bar" style="width:@phaseProgress%"></span>
+                            </div>
+                        }
+                    </section>
+
+                    @* Zone 4: DETAILS (structured low-priority info) *@
+                    <section class="tournament-card__details" aria-label="Tournament details breakdown">
+                        <p class="tournament-card__supporting"><strong>Prize pool:</strong> <strong>@card.PrizePoolLabel.Replace("Prize pool: ", string.Empty)</strong></p>
+                        <div class="tournament-card__teams" aria-label="Registered teams preview">
+                            <p class="tournament-card__supporting"><strong>@card.TeamNamesLabel:</strong></p>
+                            @if (!card.TeamPreviewLinks.Any())
+                            {
+                                <span class="tournament-team-chip">TBD</span>
+                            }
+                            else
+                            {
+                                foreach (var team in card.TeamPreviewLinks)
+                                {
+                                    <a class="tournament-team-chip tournament-team-chip--link" href="@team.LinkUrl">@team.Name</a>
+                                }
+
+                                if (card.AdditionalTeamCount > 0)
+                                {
+                                    <span class="tournament-team-chip">+@card.AdditionalTeamCount more</span>
+                                }
+                            }
+                        </div>
+                    </section>
+
+                    <a class="tournament-card__link" href="@card.LinkUrl" aria-label="@card.DetailsAriaLabel">View Details</a>
+                </article>
+            }
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cards = document.querySelectorAll(".tournament-card");
+            cards.forEach(function (card) {
+                const links = card.querySelectorAll(".tournament-card__hit-area, .tournament-card__link");
+                links.forEach(function (link) {
+                    link.addEventListener("click", function () {
+                        card.classList.add("is-loading");
+                        card.setAttribute("aria-busy", "true");
+                    });
+                });
+            });
+        });
+    </script>
+}

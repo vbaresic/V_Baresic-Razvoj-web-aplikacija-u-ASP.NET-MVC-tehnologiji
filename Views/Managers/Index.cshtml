@@ -1,0 +1,51 @@
+@model IEnumerable<EntityCardViewModel>
+@{
+    ViewData["Title"] = "Managers";
+}
+
+<section class="content-section directory-page-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Directory</p>
+            <h1>@ViewData["Title"]</h1>
+            <p class="section-copy">@ViewData["EntityCount"] managers found. Track operations leadership and move to connected teams quickly.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Teams" asp-action="Index">Browse teams</a>
+        </div>
+    </div>
+
+    <div class="card-grid card-grid--spotlight card-grid--people card-grid--managers">
+        @foreach (var entry in Model.Select((card, index) => new { card, index }))
+        {
+            var badgeVariant = entry.index % 3 == 0 ? "purple" : entry.index % 3 == 1 ? "green" : "orange";
+
+            <article class="spotlight-card people-card people-card--manager spotlight-card--@badgeVariant">
+                <a class="people-card__hit-area" href="@entry.card.LinkUrl" aria-label="Open @entry.card.Title details"></a>
+                <div class="spotlight-card__glow"></div>
+                <div class="spotlight-card__ribbon">Manager profile</div>
+                <div class="spotlight-card__header">
+                    <div class="spotlight-card__badge spotlight-card__badge--@badgeVariant">
+                        <span class="spotlight-card__badge-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M12 2 3 6v5c0 5.5 3.8 9.8 9 11 5.2-1.2 9-5.5 9-11V6zm0 7.5L6.5 6.7 12 4l5.5 2.7z" fill="currentColor"/></svg>
+                        </span>
+                        <span>@entry.card.Subtitle</span>
+                    </div>
+                    <div class="spotlight-card__metric">
+                        <span>Active</span>
+                        <small>Manager</small>
+                    </div>
+                </div>
+                <div class="spotlight-card__body">
+                    <h3>@entry.card.Title</h3>
+                    <p>@entry.card.Subtitle</p>
+                    <p>@entry.card.Body</p>
+                </div>
+                <div class="people-card__role-band" aria-label="Role summary">
+                    <span class="people-card__role-label">Role</span>
+                    <strong>Team Captain - Manager</strong>
+                </div>
+            </article>
+        }
+    </div>
+</section>

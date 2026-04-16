@@ -1,8 +1,258 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model HomeIndexViewModel
+@{
+    ViewData["Title"] = ViewData["PageTitle"] ?? "Tournament Control Room";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero-panel">
+    <div class="hero-copy">
+        <p class="eyebrow">Static mock repository</p>
+        <h1>Tournament Control Room</h1>
+        <p class="hero-text">Browse the full league object model, inspect confirmed roster data, and move through every entity with a single navigation system.</p>
+        <div class="hero-actions">
+            <a class="primary-link" asp-controller="Tournaments" asp-action="Index">Open tournaments</a>
+            <a class="secondary-link" asp-controller="Teams" asp-action="Index">Inspect teams</a>
+        </div>
+    </div>
+
+    <aside class="hero-panel__aside">
+        <h2>System snapshot</h2>
+        <p>The current seed set is loaded from the Lab 1 mock repository and exposed through standard MVC routes.</p>
+    </aside>
+</section>
+
+<section class="stat-grid" aria-label="Summary statistics">
+    @foreach (var stat in Model.Stats)
+    {
+        <article class="stat-tile">
+            <span class="stat-value">@stat.Value</span>
+            <span class="stat-label">@stat.Label</span>
+            <p>@stat.Description</p>
+        </article>
+    }
+</section>
+
+<section class="content-section">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Featured events</p>
+            <h2>Current tournament timeline</h2>
+        </div>
+    </div>
+    <div class="card-grid card-grid--events">
+        @foreach (var card in Model.Highlights)
+        {
+            <article class="tournament-card tournament-card--@card.Status.ToString().ToLowerInvariant()">
+                <a class="home-card__hit-area" href="@card.LinkUrl" aria-label="Open @card.Name details"></a>
+                <div class="tournament-card__glow"></div>
+                <div class="tournament-card__header">
+                    <div class="tournament-card__icon tournament-card__icon--@card.Type.ToString().ToLowerInvariant()" aria-hidden="true">
+                        @switch (card.Type)
+                        {
+                            case TournamentType.Final:
+                                <svg viewBox="0 0 24 24"><path d="M7 3h10v3c0 2-1.3 3.8-3.2 4.7.2 1.3.8 2.4 1.9 3.3H8.3c1.1-.9 1.7-2 1.9-3.3C8.3 9.8 7 8 7 6V3zm1 16h8v2H8zm1.6-6h6.8c-.6 1.2-1.6 2.3-3 3.1-.3.2-.7.2-1 0-1.4-.8-2.4-1.9-2.8-3.1zm.4-9v2c0 1.5 1 3 2.4 3.7.2.1.5.1.7 0C14.5 9 15.5 7.5 15.5 6V4H9z" fill="currentColor"/></svg>
+                                break;
+                            case TournamentType.Semifinal:
+                            case TournamentType.Quarterfinal:
+                                <svg viewBox="0 0 24 24"><path d="M4 5h6v4H7v2h4v2H7v2H4V5zm10 0h6v12h-6v-2h4V7h-4V5zM9 11h2v2H9z" fill="currentColor"/></svg>
+                                break;
+                            default:
+                                <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.3 5.8 2.9L12 11 6.2 8.2zM6 9.7 11 12v5.2L6 14.8zm12 0v5.1L13 17.2V12z" fill="currentColor"/></svg>
+                                break;
+                        }
+                    </div>
+
+                    <div class="tournament-card__hero">
+                        <p class="entity-card__subtitle">Featured tournament</p>
+                        <h3>@card.Name</h3>
+                        <p class="tournament-card__description">@card.Description</p>
+                    </div>
+
+                    <span class="tournament-status-badge tournament-status-badge--@card.Status.ToString().ToLowerInvariant()">@card.Status</span>
+                </div>
+
+                <div class="tournament-card__meta">
+                    <span class="badge-pill badge-pill--cyan">@card.StageLabel</span>
+                    <span class="badge-pill badge-pill--gray">@card.DateLabel</span>
+                    <span class="badge-pill badge-pill--purple">@card.VenueLabel</span>
+                    <span class="badge-pill badge-pill--blue">@card.TeamLabel</span>
+                </div>
+
+                <div class="tournament-card__timeline" aria-label="Tournament stage progression">
+                    <span class="tournament-card__step @(card.StageNumber >= 1 ? "is-active" : "")">
+                        <span class="tournament-card__step-icon" aria-hidden="true">1</span>
+                        <span>Preliminaries</span>
+                    </span>
+                    <span class="tournament-card__step @(card.StageNumber >= 2 ? "is-active" : "")">
+                        <span class="tournament-card__step-icon" aria-hidden="true">2</span>
+                        <span>Semifinals</span>
+                    </span>
+                    <span class="tournament-card__step @(card.StageNumber >= 3 ? "is-active" : "")">
+                        <span class="tournament-card__step-icon" aria-hidden="true">3</span>
+                        <span>Final</span>
+                    </span>
+                </div>
+            </article>
+        }
+    </div>
+</section>
+
+<section class="content-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Top competitors</p>
+            <h2>Top teams to watch</h2>
+            <p class="section-copy">The strongest rosters sit at the top of the bracket and get the most visual weight.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Teams" asp-action="Index">Explore teams</a>
+        </div>
+    </div>
+    <div class="card-grid card-grid--spotlight card-grid--teams">
+        @foreach (var card in Model.TopCompetitors)
+        {
+            <article class="spotlight-card spotlight-card--@card.BadgeVariant @(card.IsFeatured ? "spotlight-card--featured" : "")">
+                <a class="home-card__hit-area" href="@card.LinkUrl" aria-label="Open @card.Title details"></a>
+                <div class="spotlight-card__glow"></div>
+                <div class="spotlight-card__ribbon">@card.Subtitle</div>
+                <div class="spotlight-card__header">
+                    <div class="spotlight-card__badge spotlight-card__badge--@card.BadgeVariant">
+                        <span class="spotlight-card__badge-icon" aria-hidden="true">
+                            @switch (card.BadgeIcon)
+                            {
+                                case "crown":
+                                    <svg viewBox="0 0 24 24"><path d="M4 7l4 4 4-7 4 7 4-4v10H4V7zm2 8h12v2H6v-2z" fill="currentColor"/></svg>
+                                    break;
+                                case "plus":
+                                    <svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z" fill="currentColor"/></svg>
+                                    break;
+                                default:
+                                    <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.3 5.8 2.9L12 11 6.2 8.2z" fill="currentColor"/></svg>
+                                    break;
+                            }
+                        </span>
+                        <span>@card.BadgeText</span>
+                    </div>
+                    <div class="spotlight-card__metric">
+                        <span>@card.MetricValue</span>
+                        <small>@card.MetricLabel</small>
+                    </div>
+                </div>
+                <div class="spotlight-card__body">
+                    <h3>@card.Title</h3>
+                    <p>@card.Body</p>
+                </div>
+                <div class="spotlight-card__progress">
+                    <div class="spotlight-card__progress-bar"><span style="width:@(card.ProgressValue ?? 0)%"></span></div>
+                    <div class="spotlight-card__progress-meta">
+                        <span>@card.ProgressLabel</span>
+                        <strong>@card.ProgressCaption</strong>
+                    </div>
+                </div>
+            </article>
+        }
+    </div>
+</section>
+
+<section class="content-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Jump right in the action</p>
+            <h2>Teams recruiting right now</h2>
+            <p class="section-copy">Find the roster with the best opening before the slot disappears.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Players" asp-action="Index">Join a team</a>
+        </div>
+    </div>
+    <div class="card-grid card-grid--spotlight card-grid--recruiting">
+        @foreach (var card in Model.RecruitingTeams)
+        {
+            <article class="spotlight-card spotlight-card--@card.BadgeVariant @(card.IsFeatured ? "spotlight-card--featured" : "")">
+                <a class="home-card__hit-area" href="@card.LinkUrl" aria-label="Open @card.Title details"></a>
+                <div class="spotlight-card__glow"></div>
+                <div class="spotlight-card__ribbon">@card.Subtitle</div>
+                <div class="spotlight-card__header">
+                    <div class="spotlight-card__badge spotlight-card__badge--@card.BadgeVariant">
+                        <span class="spotlight-card__badge-icon" aria-hidden="true">
+                            @switch (card.BadgeIcon)
+                            {
+                                case "plus":
+                                    <svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z" fill="currentColor"/></svg>
+                                    break;
+                                case "user":
+                                    <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H5z" fill="currentColor"/></svg>
+                                    break;
+                                default:
+                                    <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.3 5.8 2.9L12 11 6.2 8.2z" fill="currentColor"/></svg>
+                                    break;
+                            }
+                        </span>
+                        <span>@card.BadgeText</span>
+                    </div>
+                    <div class="spotlight-card__metric">
+                        <span>@card.MetricValue</span>
+                        <small>@card.MetricLabel</small>
+                    </div>
+                </div>
+                <div class="spotlight-card__body">
+                    <h3>@card.Title</h3>
+                    <p>@card.Body</p>
+                </div>
+                <div class="spotlight-card__progress spotlight-card__progress--urgent">
+                    <div class="spotlight-card__progress-bar"><span style="width:@(card.ProgressValue ?? 0)%"></span></div>
+                    <div class="spotlight-card__progress-meta">
+                        <span>@card.ProgressLabel</span>
+                        <strong>@card.ProgressCaption</strong>
+                    </div>
+                </div>
+            </article>
+        }
+    </div>
+</section>
+
+<section class="content-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Jump right in the action</p>
+            <h2>Players looking for a team</h2>
+            <p class="section-copy">Open talent should be easy to spot and easier to contact.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Players" asp-action="Index">Browse players</a>
+        </div>
+    </div>
+    <div class="card-grid card-grid--spotlight card-grid--players">
+        @foreach (var card in Model.PlayersLookingForTeam)
+        {
+            <article class="spotlight-card spotlight-card--@card.BadgeVariant">
+                <a class="home-card__hit-area" href="@card.LinkUrl" aria-label="Open @card.Title details"></a>
+                <div class="spotlight-card__glow"></div>
+                <div class="spotlight-card__ribbon">@card.Subtitle</div>
+                <div class="spotlight-card__header">
+                    <div class="spotlight-card__badge spotlight-card__badge--@card.BadgeVariant">
+                        <span class="spotlight-card__badge-icon" aria-hidden="true">
+                            @switch (card.BadgeIcon)
+                            {
+                                case "user":
+                                    <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H5z" fill="currentColor"/></svg>
+                                    break;
+                                default:
+                                    <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.3 5.8 2.9L12 11 6.2 8.2z" fill="currentColor"/></svg>
+                                    break;
+                            }
+                        </span>
+                        <span>@card.BadgeText</span>
+                    </div>
+                    <div class="spotlight-card__metric">
+                        <span>@card.MetricValue</span>
+                        <small>@card.MetricLabel</small>
+                    </div>
+                </div>
+                <div class="spotlight-card__body">
+                    <h3>@card.Title</h3>
+                    <p>@card.Body</p>
+                </div>
+            </article>
+        }
+    </div>
+</section>

@@ -1,0 +1,51 @@
+@model IEnumerable<EntityCardViewModel>
+@{
+    ViewData["Title"] = "Teams";
+}
+
+<section class="content-section directory-page-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Directory</p>
+            <h1>@ViewData["Title"]</h1>
+            <p class="section-copy">@ViewData["EntityCount"] teams found. Compare roster depth, coaching structure, and readiness at a glance.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Players" asp-action="Index">Scout players</a>
+        </div>
+    </div>
+
+    <div class="card-grid card-grid--spotlight card-grid--teams">
+        @foreach (var card in Model)
+        {
+            var teamStatusClass = card.Body.Contains("Roster confirmed", StringComparison.OrdinalIgnoreCase) ? "people-card--confirmed" : "people-card--open";
+
+            <article class="spotlight-card people-card people-card--team @teamStatusClass">
+                <a class="people-card__hit-area" href="@card.LinkUrl" aria-label="Open @card.Title details"></a>
+                <div class="spotlight-card__glow"></div>
+                <div class="spotlight-card__ribbon">Team roster</div>
+                <div class="spotlight-card__header">
+                    <div class="spotlight-card__badge spotlight-card__badge--blue">
+                        <span class="spotlight-card__badge-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M5 20a7 7 0 0 1 14 0zm7-8a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" fill="currentColor"/></svg>
+                        </span>
+                        <span>@card.Subtitle</span>
+                    </div>
+                    <div class="spotlight-card__metric">
+                        <span>@card.Body.Split('·')[0].Trim()</span>
+                        <small>Roster</small>
+                    </div>
+                </div>
+                <div class="spotlight-card__body">
+                    <h3>@card.Title</h3>
+                    <div class="people-card__title-spacer" aria-hidden="true"></div>
+                    <p>@card.Body</p>
+                </div>
+                <div class="people-card__role-band" aria-label="Team status">
+                    <span class="people-card__role-label">Status</span>
+                    <strong>@card.Body.Split('·').Last().Trim()</strong>
+                </div>
+            </article>
+        }
+    </div>
+</section>

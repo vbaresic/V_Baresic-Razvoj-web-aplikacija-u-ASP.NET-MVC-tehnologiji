@@ -1,0 +1,60 @@
+@model Sponsor
+@{
+    ViewData["Title"] = Model.Name;
+    var sponsorTournaments = ViewData["SponsorTournaments"] as IEnumerable<Tournament> ?? Enumerable.Empty<Tournament>();
+}
+
+<section class="detail-page detail-page--sponsor">
+    <article class="content-card detail-hero detail-hero--blue">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Sponsor profile</p>
+        <h1>@Model.Name</h1>
+        <p class="detail-hero__subtitle">@Model.Website</p>
+        <div class="meta-pills detail-hero__pills">
+            <span class="badge-pill badge-pill--blue">Partner</span>
+            <span class="badge-pill badge-pill--purple">Community support</span>
+        </div>
+        <div class="detail-stat-strip">
+            <div class="detail-stat">
+                <span>Email</span>
+                <strong>@Model.ContactEmail</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Phone</span>
+                <strong>@Model.ContactPhone</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Website</span>
+                <strong>@Model.Website</strong>
+            </div>
+        </div>
+    </article>
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Contact</h2>
+            <div class="detail-grid">
+                <div>
+                    <p><strong>Email:</strong> @Model.ContactEmail</p>
+                    <p><strong>Phone:</strong> @Model.ContactPhone</p>
+                </div>
+                <div>
+                    <p><strong>Website:</strong> <a href="@Model.Website" target="_blank" rel="noreferrer">@Model.Website</a></p>
+                    <p><strong>Sponsorship amount:</strong> @Model.SponsorshipAmount.ToString("C")</p>
+                </div>
+            </div>
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Linked tournaments</h2>
+                <div class="badge-stack">
+                    @foreach (var tournament in sponsorTournaments)
+                    {
+                        <a class="badge-pill badge-pill--gold" asp-controller="Tournaments" asp-action="Details" asp-route-id="@tournament.Id">@tournament.Name</a>
+                    }
+                </div>
+            </section>
+        </aside>
+    </div>
+</section>

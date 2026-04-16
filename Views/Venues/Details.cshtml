@@ -1,0 +1,63 @@
+@model Venue
+@{
+    ViewData["Title"] = Model.Name;
+    var venueTournaments = ViewData["VenueTournaments"] as IEnumerable<Tournament> ?? Enumerable.Empty<Tournament>();
+}
+
+<section class="detail-page detail-page--venue">
+    <article class="content-card detail-hero detail-hero--cyan">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Venue profile</p>
+        <h1>@Model.Name</h1>
+        <p class="detail-hero__subtitle">@Model.Address, @Model.City</p>
+        <div class="meta-pills detail-hero__pills">
+            <span class="badge-pill badge-pill--cyan">Capacity @Model.Capacity</span>
+            <span class="badge-pill @(Model.IsAvailable ? "status-ongoing" : "status-cancelled")">@(Model.IsAvailable ? "Available" : "Booked")</span>
+        </div>
+        <div class="detail-stat-strip">
+            <div class="detail-stat">
+                <span>Seats</span>
+                <strong>@Model.Capacity</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Booking</span>
+                <strong>@Model.BookingFrom.ToString("dd MMM yyyy")</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Status</span>
+                <strong>@(Model.IsAvailable ? "Available" : "Booked")</strong>
+            </div>
+        </div>
+    </article>
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Capacity and booking</h2>
+            <div class="detail-grid">
+                <div>
+                    <p><strong>Seats:</strong> @Model.Capacity</p>
+                    <p><strong>Available:</strong> @(Model.IsAvailable ? "Yes" : "No")</p>
+                    <p><strong>Booking:</strong> @Model.BookingFrom.ToString("dd MMM yyyy") to @Model.BookingTo.ToString("dd MMM yyyy")</p>
+                </div>
+                <div>
+                    <p><strong>Contact email:</strong> @Model.ContactEmail</p>
+                    <p><strong>Contact phone:</strong> @Model.ContactPhone</p>
+                    <p><strong>Address:</strong> @Model.Address</p>
+                    <p><strong>City:</strong> @Model.City</p>
+                </div>
+            </div>
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Hosted tournaments</h2>
+                <div class="badge-stack">
+                    @foreach (var tournament in venueTournaments)
+                    {
+                        <a class="badge-pill badge-pill--gold" asp-controller="Tournaments" asp-action="Details" asp-route-id="@tournament.Id">@tournament.Name</a>
+                    }
+                </div>
+            </section>
+        </aside>
+    </div>
+</section>

@@ -1,0 +1,19 @@
+@model IEnumerable<BreadcrumbItem>
+
+<nav class="breadcrumb-trail" aria-label="Breadcrumb">
+    <ol>
+        @foreach (var item in Model)
+        {
+            <li>
+                @if (item.IsCurrent)
+                {
+                    <span aria-current="page">@item.Label</span>
+                }
+                else
+                {
+                    <a href="@item.Url">@item.Label</a>
+                }
+            </li>
+        }
+    </ol>
+</nav>

@@ -1,0 +1,66 @@
+@model Player
+@{
+    ViewData["Title"] = Model.GamerTag;
+    var playerTeam = ViewData["PlayerTeam"] as Team;
+}
+
+<section class="detail-page detail-page--player">
+    <article class="content-card detail-hero detail-hero--cyan">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Player profile</p>
+        <h1>@Model.GamerTag</h1>
+        <p class="detail-hero__subtitle">@Model.Name</p>
+        <div class="meta-pills detail-hero__pills">
+            <span class="badge-pill badge-pill--cyan">@Model.Role</span>
+            <span class="badge-pill badge-pill--blue">@Model.AccountInformation.LeagueTier</span>
+            <span class="badge-pill badge-pill--purple">@Model.AccountInformation.Region</span>
+        </div>
+        <div class="detail-stat-strip">
+            <div class="detail-stat">
+                <span>Preferred lane</span>
+                <strong>@Model.PreferredPosition</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Secondary lane</span>
+                <strong>@Model.SecondaryPosition</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Joined</span>
+                <strong>@Model.JoinedAt.ToString("dd MMM yyyy")</strong>
+            </div>
+        </div>
+    </article>
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Account and role</h2>
+            <div class="detail-grid">
+                <div>
+                    <p><strong>Role:</strong> @Model.Role</p>
+                    <p><strong>Preferred:</strong> @Model.PreferredPosition</p>
+                    <p><strong>Secondary:</strong> @Model.SecondaryPosition</p>
+                </div>
+                <div>
+                    <p><strong>Summoner:</strong> @Model.AccountInformation.SummonerName</p>
+                    <p><strong>Riot tag:</strong> @Model.AccountInformation.RiotTag</p>
+                    <p><strong>Region:</strong> @Model.AccountInformation.Region</p>
+                    <p><strong>Tier:</strong> @Model.AccountInformation.LeagueTier</p>
+                </div>
+            </div>
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Team</h2>
+                @if (playerTeam is null)
+                {
+                    <p>No team assignment found.</p>
+                }
+                else
+                {
+                    <a class="badge-pill badge-pill--gold" asp-controller="Teams" asp-action="Details" asp-route-id="@playerTeam.Id">@playerTeam.Name</a>
+                }
+            </section>
+        </aside>
+    </div>
+</section>

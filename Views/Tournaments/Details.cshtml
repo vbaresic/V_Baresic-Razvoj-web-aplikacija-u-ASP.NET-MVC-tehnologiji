@@ -1,0 +1,74 @@
+@model Tournament
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="detail-page detail-page--tournament">
+    <article class="content-card detail-hero detail-hero--purple">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Tournament profile</p>
+        <h1>@Model.Name</h1>
+        <p class="detail-hero__subtitle">@Model.Description</p>
+        <div class="meta-pills detail-hero__pills">
+            <span class="badge-pill badge-pill--purple">@Model.Type</span>
+            <span class="badge-pill badge-pill--blue">@Model.Format</span>
+            <span class="badge-pill @(Model.Status == TournamentStatus.Upcoming ? "status-upcoming" : Model.Status == TournamentStatus.Ongoing ? "status-ongoing" : Model.Status == TournamentStatus.Completed ? "status-completed" : "status-cancelled")">@Model.Status</span>
+        </div>
+        <div class="detail-stat-strip">
+            <div class="detail-stat">
+                <span>Prize pool</span>
+                <strong>@Model.PrizePool.ToString("C")</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Starts</span>
+                <strong>@Model.StartDate.ToString("dd MMM yyyy")</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Venue</span>
+                <strong>@Model.Venue.Name</strong>
+            </div>
+        </div>
+    </article>
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Event data</h2>
+            <div class="detail-grid">
+                <div>
+                    <p><strong>Type:</strong> @Model.Type</p>
+                    <p><strong>Format:</strong> @Model.Format</p>
+                    <p><strong>Status:</strong> @Model.Status</p>
+                    <p><strong>Prize pool:</strong> @Model.PrizePool.ToString("C")</p>
+                </div>
+                <div>
+                    <p><strong>Starts:</strong> @Model.StartDate.ToString("dd MMM yyyy")</p>
+                    <p><strong>Ends:</strong> @Model.EndDate.ToString("dd MMM yyyy")</p>
+                    <p><strong>Deadline:</strong> @Model.RegistrationDeadline.ToString("dd MMM yyyy")</p>
+                    <p><strong>Venue:</strong> <a asp-controller="Venues" asp-action="Details" asp-route-id="@Model.Venue.Id">@Model.Venue.Name</a></p>
+                </div>
+            </div>
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Registered teams</h2>
+                <ul class="compact-list">
+                    @foreach (var team in Model.Teams)
+                    {
+                        <li><a asp-controller="Teams" asp-action="Details" asp-route-id="@team.Id">@team.Name</a></li>
+                    }
+                </ul>
+            </section>
+
+            <section class="content-card detail-panel">
+                <h2>Sponsors</h2>
+                <div class="badge-stack">
+                    @foreach (var sponsor in Model.Sponsors)
+                    {
+                        <a class="badge-pill badge-pill--gold" asp-controller="Sponsors" asp-action="Details" asp-route-id="@sponsor.Id">@sponsor.Name</a>
+                    }
+                </div>
+            </section>
+        </aside>
+    </div>
+</section>

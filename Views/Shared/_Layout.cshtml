@@ -9,42 +9,124 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/League_of_Legends_Tournament_Hosting.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">League_of_Legends_Tournament_Hosting</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<body class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "home-page" : "")">
+    <div class="app-shell">
+        @await Html.PartialAsync("Components/_Sidebar")
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - League_of_Legends_Tournament_Hosting - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="app-content">
+            <header class="content-topbar">
+                <div class="topbar-sidebar-controls" aria-label="Sidebar controls">
+                    <button class="topbar-btn topbar-btn--sidebar" type="button" data-sidebar-action="open-compact" aria-label="Open sidebar" title="Open sidebar">
+                        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" fill="currentColor"/></svg>
+                    </button>
+                    <button class="topbar-btn topbar-btn--sidebar topbar-btn--full" type="button" data-sidebar-action="open-full" aria-label="Open full sidebar" title="Open full sidebar">
+                        <svg viewBox="0 0 24 24"><path d="M4 6h8v2H4zm0 5h12v2H4zm0 5h8v2H4zM16 7l4 5-4 5z" fill="currentColor"/></svg>
+                    </button>
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="topbar-btn" type="button" aria-label="Notifications" title="Notifications">
+                        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5s-5 2.24-5 5v2H6c-1.1 0-2 .9-2 2v10h16V10c0-1.1-.9-2-2-2zm-6-2c1.66 0 3 1.34 3 3v2h-6V6c0-1.66 1.34-3 3-3zm6 12H6v-8h12v8zm-1-9h-2v2h2v-2zm-4 0H8v2h2v-2z" fill="currentColor"/></svg>
+                        <span class="topbar-notif-badge">3</span>
+                    </button>
+                    
+                    <button class="topbar-btn" type="button" aria-label="Profile" title="Profile">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
+                    </button>
+                </div>
+
+                <div class="topbar-breadcrumb">
+                    @await Html.PartialAsync("Components/_Breadcrumb", ViewData["Breadcrumbs"] as IEnumerable<BreadcrumbItem>)
+                </div>
+
+                <div class="topbar-socials" aria-label="Social media quick links">
+                    <a href="#" class="topbar-social" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm5 2.5A4.5 4.5 0 1 1 7.5 11 4.5 4.5 0 0 1 12 6.5zm0 2A2.5 2.5 0 1 0 14.5 11 2.5 2.5 0 0 0 12 8.5zm5.75-3.1a1.15 1.15 0 1 1-1.15 1.15 1.15 1.15 0 0 1 1.15-1.15z" fill="currentColor"/></svg>
+                    </a>
+                    <a href="#" class="topbar-social" aria-label="Twitch">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 2h18v13.5l-5 4.5h-4l-3 3H7v-3H3zm2 2v14h3v3l3-3h4l4-3.5V4zm6 3h2v5h-2zm4 0h2v5h-2z" fill="currentColor"/></svg>
+                    </a>
+                    <a href="#" class="topbar-social" aria-label="YouTube">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.6 4.6 12 4.6 12 4.6s-5.6 0-7.5.5A3 3 0 0 0 2.4 7.2 31.3 31.3 0 0 0 2 12a31.3 31.3 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.9.5 7.5.5 7.5.5s5.6 0 7.5-.5a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 22 12a31.3 31.3 0 0 0-.4-4.8zM10 15.2V8.8L15.5 12z" fill="currentColor"/></svg>
+                    </a>
+                    <a href="#" class="topbar-social" aria-label="Discord">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 4.9A16.2 16.2 0 0 0 16.7 3l-.2.4a14.7 14.7 0 0 1 2.8 1.4 12 12 0 0 0-13 0A14.7 14.7 0 0 1 9.1 3.4L8.9 3a16.2 16.2 0 0 0-3.8 1.9C2.7 8 2 11 2 14c1 1.4 2.4 2.7 4 3.5l.6-1a10 10 0 0 1-1.8-1l.4-.3a11.1 11.1 0 0 0 14.6 0l.4.3a10 10 0 0 1-1.8 1l.6 1c1.6-.8 3-2.1 4-3.5 0-3-0.7-6-2.5-9.1zM9.3 13.5a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm5.4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6z" fill="currentColor"/></svg>
+                    </a>
+                </div>
+            </header>
+
+            <main class="site-main" role="main">
+                @RenderBody()
+            </main>
+
+            @await Html.PartialAsync("Components/_Footer")
         </div>
-    </footer>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const appShell = document.querySelector('.app-shell');
+            const stateKey = 'league-atlas-sidebar-state';
+            const dropdown = document.querySelector('[data-dropdown="looking-for"]');
+
+            const applyState = function(state) {
+                appShell.classList.remove('sidebar-expanded', 'sidebar-hidden');
+                if (state === 'expanded') {
+                    appShell.classList.add('sidebar-expanded');
+                } else if (state === 'hidden') {
+                    appShell.classList.add('sidebar-hidden');
+                }
+
+                localStorage.setItem(stateKey, state);
+            };
+
+            const savedState = localStorage.getItem(stateKey) || 'compact';
+            applyState(savedState);
+
+            document.querySelectorAll('[data-sidebar-action]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const action = button.getAttribute('data-sidebar-action');
+
+                    if (action === 'expand') {
+                        applyState('expanded');
+                    }
+
+                    if (action === 'collapse') {
+                        applyState('compact');
+                    }
+
+                    if (action === 'hide') {
+                        applyState('hidden');
+                    }
+
+                    if (action === 'open-compact') {
+                        applyState('compact');
+                    }
+
+                    if (action === 'open-full') {
+                        applyState('expanded');
+                    }
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('is-open');
+                }
+            });
+
+            const dropdownToggle = document.querySelector('[data-dropdown="looking-for"] .sidebar-dropdown-toggle');
+            if (dropdownToggle && dropdown) {
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('is-open');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,55 @@
+@model IEnumerable<EntityCardViewModel>
+@{
+    ViewData["Title"] = "Players";
+}
+
+<section class="content-section directory-page-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Directory</p>
+            <h1>@ViewData["Title"]</h1>
+            <p class="section-copy">@ViewData["EntityCount"] players found. Filter talent by role, rank, and availability to build stronger rosters.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Teams" asp-action="Index">Open teams</a>
+        </div>
+    </div>
+
+    <div class="card-grid card-grid--spotlight card-grid--people card-grid--players">
+        @foreach (var entry in Model.Select((card, index) => new { card, index }))
+        {
+            var badgeVariant = entry.index % 3 == 0 ? "green" : entry.index % 3 == 1 ? "orange" : "purple";
+            var playerMeta = entry.card.Body.Split('|', StringSplitOptions.TrimEntries);
+            var primaryRole = playerMeta.ElementAtOrDefault(0) ?? "Flex";
+            var playerRank = playerMeta.ElementAtOrDefault(1) ?? "Unranked";
+            var laneProfile = playerMeta.ElementAtOrDefault(2) ?? string.Empty;
+            var roleClass = "role-" + new string(primaryRole.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+
+            <article class="spotlight-card people-card people-card--player people-card--@roleClass spotlight-card--@badgeVariant">
+                <a class="people-card__hit-area" href="@entry.card.LinkUrl" aria-label="Open @entry.card.Title details"></a>
+                <div class="spotlight-card__glow"></div>
+                <div class="spotlight-card__ribbon">Player profile</div>
+                <div class="spotlight-card__header">
+                    <div class="spotlight-card__badge spotlight-card__badge--@badgeVariant">
+                        <span class="spotlight-card__badge-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H5z" fill="currentColor"/></svg>
+                        </span>
+                        <span>@primaryRole</span>
+                    </div>
+                    <div class="spotlight-card__metric">
+                        <span>@playerRank</span>
+                        <small>Rank</small>
+                    </div>
+                </div>
+                <div class="spotlight-card__body">
+                    <h3>@entry.card.Title</h3>
+                    <p>@entry.card.Subtitle</p>
+                </div>
+                <div class="people-card__role-band" aria-label="Primary role">
+                    <span class="people-card__role-label">Lane profile</span>
+                    <strong>@laneProfile</strong>
+                </div>
+            </article>
+        }
+    </div>
+</section>

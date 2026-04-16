@@ -1,0 +1,49 @@
+@model IEnumerable<EntityCardViewModel>
+@{
+    ViewData["Title"] = "Venues";
+}
+
+<section class="content-section directory-page-section">
+    <div class="section-heading section-heading--anchored">
+        <div>
+            <p class="eyebrow">Directory</p>
+            <h1>@ViewData["Title"]</h1>
+            <p class="section-copy">@ViewData["EntityCount"] venues found. Compare capacity, availability windows, and booking readiness.</p>
+        </div>
+        <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Tournaments" asp-action="Index">See tournaments</a>
+        </div>
+    </div>
+
+    <div class="card-grid card-grid--spotlight card-grid--venues">
+        @foreach (var card in Model)
+        {
+            <article class="spotlight-card people-card people-card--venue">
+                <a class="people-card__hit-area" href="@card.LinkUrl" aria-label="Open @card.Title details"></a>
+                <div class="spotlight-card__glow"></div>
+                <div class="spotlight-card__ribbon">Venue</div>
+                <div class="spotlight-card__header">
+                    <div class="spotlight-card__badge spotlight-card__badge--blue">
+                        <span class="spotlight-card__badge-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M12 2 4 6v16h16V6zm-1 14H8v-2h3zm0-4H8v-2h3zm5 4h-3v-2h3zm0-4h-3v-2h3z" fill="currentColor"/></svg>
+                        </span>
+                        <span>@card.Subtitle</span>
+                    </div>
+                    <div class="spotlight-card__metric">
+                        <span>@card.Body.Split('·')[0].Trim()</span>
+                        <small>Capacity</small>
+                    </div>
+                </div>
+                <div class="spotlight-card__body">
+                    <h3>@card.Title</h3>
+                    <p>@card.Subtitle</p>
+                    <p>@card.Body</p>
+                </div>
+                <div class="people-card__role-band" aria-label="Availability status">
+                    <span class="people-card__role-label">Availability</span>
+                    <strong>@card.Body.Split('·').Last().Trim()</strong>
+                </div>
+            </article>
+        }
+    </div>
+</section>

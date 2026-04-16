@@ -1,0 +1,77 @@
+@model Manager
+@{
+    ViewData["Title"] = Model.Name;
+    var managerTeam = ViewData["ManagerTeam"] as Team;
+}
+
+<section class="detail-page detail-page--manager">
+    <article class="content-card detail-hero detail-hero--blue">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Manager profile</p>
+        <h1>@Model.Name</h1>
+        <p class="detail-hero__subtitle">Operations and oversight</p>
+        <div class="meta-pills detail-hero__pills">
+            <span class="badge-pill badge-pill--blue">@Model.YearsOfExperience years experience</span>
+            <span class="badge-pill badge-pill--purple">Operations</span>
+        </div>
+        <div class="detail-stat-strip">
+            <div class="detail-stat">
+                <span>Years</span>
+                <strong>@Model.YearsOfExperience</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Hired</span>
+                <strong>@Model.HiredAt.ToString("dd MMM yyyy")</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Status</span>
+                <strong>@(managerTeam is null ? "Open" : "Assigned")</strong>
+            </div>
+        </div>
+    </article>
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Experience</h2>
+            <div class="detail-grid">
+                <div>
+                    <p><strong>Years:</strong> @Model.YearsOfExperience</p>
+                    <p><strong>Hired:</strong> @Model.HiredAt.ToString("dd MMM yyyy")</p>
+                </div>
+                <div>
+                    <h2>Assigned team</h2>
+                    @if (managerTeam is null)
+                    {
+                        <p>No team assignment found.</p>
+                    }
+                    else
+                    {
+                        <a class="badge-pill badge-pill--gold" asp-controller="Teams" asp-action="Details" asp-route-id="@managerTeam.Id">@managerTeam.Name</a>
+                    }
+                </div>
+            </div>
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Quick actions</h2>
+                <div class="badge-stack">
+                    <a class="badge-pill badge-pill--blue" asp-controller="Teams" asp-action="Index">All teams</a>
+                    <a class="badge-pill badge-pill--purple" asp-controller="Managers" asp-action="Index">All managers</a>
+                </div>
+            </section>
+
+            <section class="content-card detail-panel">
+                <h2>Assignment status</h2>
+                @if (managerTeam is null)
+                {
+                    <p>Manager is currently unassigned and available for operations support.</p>
+                }
+                else
+                {
+                    <p>Currently managing <strong>@managerTeam.Name</strong> and overseeing match operations.</p>
+                }
+            </section>
+        </aside>
+    </div>
+</section>

@@ -20,6 +20,8 @@ namespace League_of_Legends_Tournament_Hosting
                 new DateTime(2025, 8, 20), new DateTime(2025, 8, 21),
                 "hello@rjekalanc.hr", "+385 51 456 7890");
 
+            var allVenues = new List<Venue> { venue1, venue2, venue3 };
+
             // ── SPONSORS ─────────────────────────────────────────────────────
             var sponsor1 = new Sponsor(1, "HT Telekom", "https://www.t.ht.hr", "esports@ht.hr",
                 "+385 1 111 2222", 5000.00m,
@@ -33,6 +35,8 @@ namespace League_of_Legends_Tournament_Hosting
                 "+43 662 6582 0", 10000.00m,
                 new DateTime(2025, 1, 1), new DateTime(2025, 12, 31));
 
+            var allSponsors = new List<Sponsor> { sponsor1, sponsor2, sponsor3 };
+
             // ── COACHES ──────────────────────────────────────────────────────
             var coach1 = new Coach(1, "Ivan Horvat", "IvanCoach", new DateTime(2022, 3, 15), 5);
             var coach2 = new Coach(2, "Marko Perić", "MarkoPeric", new DateTime(2021, 6, 1), 7);
@@ -41,6 +45,8 @@ namespace League_of_Legends_Tournament_Hosting
             var coach5 = new Coach(5, "Ante Jurić", "AnteJ", new DateTime(2022, 11, 20), 4);
             var coach6 = new Coach(6, "Nikola Šarić", "NikoSaric", new DateTime(2019, 4, 12), 11);
 
+            var seededCoaches = new List<Coach> { coach1, coach2, coach3, coach4, coach5, coach6 };
+
             // ── MANAGERS ─────────────────────────────────────────────────────
             var manager1 = new Manager(1, "Petra Kovač", new DateTime(2022, 3, 15), 4);
             var manager2 = new Manager(2, "Ana Babić", new DateTime(2021, 6, 1), 6);
@@ -48,6 +54,8 @@ namespace League_of_Legends_Tournament_Hosting
             var manager4 = new Manager(4, "Sara Marić", new DateTime(2020, 9, 5), 8);
             var manager5 = new Manager(5, "Iva Paulić", new DateTime(2022, 11, 20), 3);
             var manager6 = new Manager(6, "Dora Knežević", new DateTime(2019, 4, 12), 10);
+
+            var allManagers = new List<Manager> { manager1, manager2, manager3, manager4, manager5, manager6 };
 
             // ── PLAYERS ──────────────────────────────────────────────────────
 
@@ -179,6 +187,15 @@ namespace League_of_Legends_Tournament_Hosting
             var allTournaments = new List<Tournament> { tournament1, tournament2, tournament3 };
             var allPlayers = allTeams.SelectMany(t => t.Players).ToList();
 
+            MockRepository.Initialize(
+                seededCoaches,
+                allManagers,
+                allPlayers,
+                allTeams,
+                allSponsors,
+                allVenues,
+                allTournaments);
+
             // 1. All midlaners across all teams
             var midlaners = allPlayers
                 .Where(p => p.PreferredPosition == Position.MidLane)
@@ -214,7 +231,7 @@ namespace League_of_Legends_Tournament_Hosting
             Debug.WriteLine($"\n--- Total Prize Pool ---");
             Debug.WriteLine($"  {totalPrizePool:C}");
 
-            // 6. Teams sorted by registration date
+            // 6. Teams sorted by registration date7
             var teamsByDate = allTeams
                 .OrderBy(t => t.RegisteredAt)
                 .ToList();

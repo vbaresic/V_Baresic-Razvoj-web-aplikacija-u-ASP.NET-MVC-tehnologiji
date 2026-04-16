@@ -21,7 +21,6 @@ D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\scopedcss\bundle\League of Legends Tournament Hosting.styles.css
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\scopedcss\projectbundle\League of Legends Tournament Hosting.bundle.scp.css
-D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\compressed\rqfnlb06n0-{0}-b9sayid5wm-b9sayid5wm.gz
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\compressed\5u2hxz0u3y-{0}-61n19gt1b8-61n19gt1b8.gz
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\compressed\nwrfo8jbf4-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\compressed\qkahpqf0d6-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -90,9 +89,11 @@ D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\staticwebassets.development.json
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\swae.build.ex.cache
-D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\League of Legends Tournament Hosting.dll
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\refint\League of Legends Tournament Hosting.dll
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\League of Legends Tournament Hosting.pdb
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\League of Legends Tournament Hosting.genruntimeconfig.cache
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\ref\League of Legends Tournament Hosting.dll
+D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\League of Legends Tournament Hosting.sourcelink.json
+D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
+D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\compressed\rqfnlb06n0-{0}-sehm8fkmbq-sehm8fkmbq.gz

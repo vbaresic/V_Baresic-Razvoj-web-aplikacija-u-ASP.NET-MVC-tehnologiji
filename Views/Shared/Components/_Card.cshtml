@@ -1,0 +1,10 @@
+@model EntityCardViewModel
+
+<article class="entity-card">
+    <div class="entity-card__header">
+        <p class="entity-card__subtitle">@Model.Subtitle</p>
+        <h3>@Model.Title</h3>
+    </div>
+    <p class="entity-card__body">@Model.Body</p>
+    <a class="entity-card__link" href="@Model.LinkUrl">@Model.LinkText</a>
+</article>

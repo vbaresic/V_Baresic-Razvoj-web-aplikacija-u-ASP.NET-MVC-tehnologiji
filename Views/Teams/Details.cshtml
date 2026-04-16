@@ -1,0 +1,68 @@
+@model Team
+@{
+    ViewData["Title"] = Model.Name;
+    var relatedTournaments = ViewData["RelatedTournaments"] as IEnumerable<Tournament> ?? Enumerable.Empty<Tournament>();
+}
+
+<section class="detail-page detail-page--team">
+    <article class="content-card detail-hero detail-hero--green">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Team profile</p>
+        <h1>@Model.Name</h1>
+        <p class="detail-hero__subtitle">Registered @Model.RegisteredAt.ToString("dd MMM yyyy")</p>
+        <div class="meta-pills detail-hero__pills">
+            <span class="badge-pill badge-pill--blue">@Model.Players.Count players</span>
+            <span class="badge-pill badge-pill--purple">Confirmed roster</span>
+        </div>
+        <div class="detail-stat-strip">
+            <div class="detail-stat">
+                <span>Coach</span>
+                <strong>@Model.Coach.GamerTag</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Manager</span>
+                <strong>@Model.Manager.Name</strong>
+            </div>
+            <div class="detail-stat">
+                <span>Roster</span>
+                <strong>@Model.Players.Count players</strong>
+            </div>
+        </div>
+    </article>
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Leadership and roster</h2>
+            <div class="detail-grid">
+                <div>
+                    <p><strong>Coach:</strong> @Model.Coach.Name (@Model.Coach.GamerTag)</p>
+                    <p><strong>Manager:</strong> @Model.Manager.Name</p>
+                </div>
+                <div>
+                    <h2>Roster</h2>
+                    <ul class="compact-list">
+                        @foreach (var player in Model.Players)
+                        {
+                            <li>
+                                <a asp-controller="Players" asp-action="Details" asp-route-id="@player.Id">@player.GamerTag</a>
+                                <span class="badge-pill badge-pill--cyan">@player.Role</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Related tournaments</h2>
+                <div class="badge-stack">
+                    @foreach (var tournament in relatedTournaments)
+                    {
+                        <a class="badge-pill badge-pill--gold" asp-controller="Tournaments" asp-action="Details" asp-route-id="@tournament.Id">@tournament.Name</a>
+                    }
+                </div>
+            </section>
+        </aside>
+    </div>
+</section>
