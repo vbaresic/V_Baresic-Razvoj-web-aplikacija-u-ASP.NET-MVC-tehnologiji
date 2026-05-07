@@ -1,7 +1,10 @@
-﻿namespace League_of_Legends_Tournament_Hosting.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace League_of_Legends_Tournament_Hosting.Models
 {
     public class Sponsor
     {
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Website { get; set; }
@@ -10,6 +13,9 @@
         public decimal SponsorshipAmount { get; set; }
         public DateTime ContractStart { get; set; }
         public DateTime ContractEnd { get; set; }
+
+        // EF Core required parameterless constructor
+        public Sponsor() { }
 
         public Sponsor(
             int id,

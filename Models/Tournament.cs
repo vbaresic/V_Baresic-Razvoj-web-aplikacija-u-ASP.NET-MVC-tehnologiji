@@ -1,9 +1,13 @@
-﻿namespace League_of_Legends_Tournament_Hosting.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace League_of_Legends_Tournament_Hosting.Models
 {
     public class Tournament
     {
         public const int MaximumTeamsCount = 12;
 
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -14,13 +18,29 @@
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime RegistrationDeadline { get; set; }
-        public Venue Venue { get; set; }
 
-        private readonly List<Team> _teams = new();
-        private readonly List<Sponsor> _sponsors = new();
+        // Foreign Key
+        public int VenueId { get; set; }
 
-        public IReadOnlyList<Team> Teams => _teams.AsReadOnly();
-        public IReadOnlyList<Sponsor> Sponsors => _sponsors.AsReadOnly();
+        // Navigation Properties
+        [ForeignKey("VenueId")]
+        public virtual Venue Venue { get; set; }
+
+        // EF Core collections for many-to-many relationships
+        public virtual ICollection<Team> TeamsList { get; set; } = new List<Team>();
+        public virtual ICollection<Sponsor> SponsorsList { get; set; } = new List<Sponsor>();
+
+        // Business logic properties - work directly with EF collections
+        [NotMapped]
+        public IReadOnlyCollection<Team> Teams =>
+            (TeamsList as IReadOnlyCollection<Team>) ?? new List<Team>();
+
+        [NotMapped]
+        public IReadOnlyCollection<Sponsor> Sponsors =>
+            (SponsorsList as IReadOnlyCollection<Sponsor>) ?? new List<Sponsor>();
+
+        // EF Core required parameterless constructor
+        public Tournament() { }
 
         public Tournament(
             int id,
@@ -45,6 +65,7 @@
             EndDate = endDate;
             RegistrationDeadline = registrationDeadline;
             Venue = venue ?? throw new ArgumentNullException(nameof(venue));
+            VenueId = venue.Id;
         }
 
         public void RegisterTeam(Team team)
@@ -52,12 +73,12 @@
             if (team == null) throw new ArgumentNullException(nameof(team));
             if (Status != TournamentStatus.Upcoming)
                 throw new InvalidOperationException("Teams can only be registered while the tournament is upcoming.");
-            if (_teams.Count >= MaximumTeamsCount)
+            if ((TeamsList?.Count ?? 0) >= MaximumTeamsCount)
                 throw new InvalidOperationException($"Tournament is full. Maximum team count is {MaximumTeamsCount}.");
-            if (_teams.Contains(team))
+            if ((TeamsList?.Any(t => t.Id == team.Id)) ?? false)
                 throw new InvalidOperationException("Team is already registered in this tournament.");
 
-            _teams.Add(team);
+            TeamsList?.Add(team);
         }
 
         public bool RemoveTeam(Team team)
@@ -66,29 +87,29 @@
             if (Status != TournamentStatus.Upcoming)
                 throw new InvalidOperationException("Teams can only be removed while the tournament is upcoming.");
 
-            return _teams.Remove(team);
+            return TeamsList?.Remove(team) ?? false;
         }
 
         public void AddSponsor(Sponsor sponsor)
         {
             if (sponsor == null) throw new ArgumentNullException(nameof(sponsor));
-            if (_sponsors.Contains(sponsor))
+            if ((SponsorsList?.Any(s => s.Id == sponsor.Id)) ?? false)
                 throw new InvalidOperationException("Sponsor is already added to this tournament.");
 
-            _sponsors.Add(sponsor);
+            SponsorsList?.Add(sponsor);
         }
 
         public bool RemoveSponsor(Sponsor sponsor)
         {
             if (sponsor == null) throw new ArgumentNullException(nameof(sponsor));
-            return _sponsors.Remove(sponsor);
+            return SponsorsList?.Remove(sponsor) ?? false;
         }
 
         public void StartTournament()
         {
             if (Status != TournamentStatus.Upcoming)
                 throw new InvalidOperationException("Only upcoming tournaments can be started.");
-            if (_teams.Count < 2)
+            if ((TeamsList?.Count ?? 0) < 2)
                 throw new InvalidOperationException("At least 2 teams are required to start a tournament.");
 
             Status = TournamentStatus.Ongoing;

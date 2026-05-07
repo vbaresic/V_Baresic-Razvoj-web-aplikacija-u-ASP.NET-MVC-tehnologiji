@@ -1,18 +1,32 @@
+using League_of_Legends_Tournament_Hosting.Data;
 using League_of_Legends_Tournament_Hosting.Models;
 using League_of_Legends_Tournament_Hosting.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Controllers
 {
+    [Route("menadzer")]
     public class ManagersController : AppControllerBase
     {
-        public IActionResult Index()
+        private readonly TournamentDbContext _dbContext;
+
+        public ManagersController(TournamentDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        [Route("")]
+        [Route("pregled")]
+        [Route("sve")]
+        public async Task<IActionResult> Index()
         {
             SetBreadcrumbs(
                 new BreadcrumbItem("Home", Url.Action("Index", "Home")),
                 new BreadcrumbItem("Managers", null));
 
-            var cards = MockRepository.Managers
+            var cards = await _dbContext.Managers
+                .AsNoTracking()
                 .OrderBy(manager => manager.Name)
                 .Select(manager => new EntityCardViewModel(
                     manager.Name,
@@ -20,16 +34,21 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                     $"{manager.YearsOfExperience} years of experience · Hired {manager.HiredAt:dd MMM yyyy}",
                     "View Details",
                     Url.Action(nameof(Details), new { id = manager.Id }) ?? "#"))
-                .ToList();
+                .ToListAsync();
 
             ViewData["PageTitle"] = "Managers";
             ViewData["EntityCount"] = cards.Count;
             return View(cards);
         }
 
-        public IActionResult Details(int id)
+        [Route("detalji/{id:int}")]
+        [Route("profil/{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            var manager = MockRepository.GetManager(id);
+            var manager = await _dbContext.Managers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (manager is null)
             {
                 return NotFound();
@@ -40,7 +59,11 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                 new BreadcrumbItem("Managers", Url.Action(nameof(Index))),
                 new BreadcrumbItem(manager.Name, null));
 
-            ViewData["ManagerTeam"] = MockRepository.Teams.FirstOrDefault(team => team.Manager.Id == manager.Id);
+            var managerTeam = await _dbContext.Teams
+                .AsNoTracking()
+                .FirstOrDefaultAsync(team => team.ManagerId == manager.Id);
+            
+            ViewData["ManagerTeam"] = managerTeam;
             return View(manager);
         }
     }

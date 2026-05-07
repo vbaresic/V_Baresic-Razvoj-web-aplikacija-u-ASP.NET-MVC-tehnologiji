@@ -5,24 +5,25 @@ This is an ASP.NET Core MVC application built with Razor Views.
 It uses a mock repository with static data (no database).
 
 ## Sub-Agent Delegation
-This project uses specialized sub-agents defined in `.github/instructions/`.
+This project uses specialized sub-agents defined in `.github/agents/`.
 
 ### Main-Agent First Gate
 - The main agent MUST always send one user-visible response first before invoking any sub-agent.
 - That first response must include the `Logging Protocol` start block with the full original user prompt.
 - Sub-agent delegation is allowed only after that initial main-agent response has been emitted.
 
-### UX Sub-Agent
-**File**: `.github/instructions/ux-agent.instructions.md`
-**Trigger**: Automatically apply UX agent instructions when:
-- Generating or modifying any `.cshtml` view file
-- Writing CSS in `/wwwroot/css/`
-- Creating layout or partial view files
-- Building navigation, cards, lists, or detail pages
+### UX Sub-Agent Handoff
+**Agent**: `.github/agents/ux-sub-agent.agent.md` (name: "UX Sub-Agent")
+**Trigger**: Delegate to UX Sub-Agent when:
+- User asks to generate or modify any `.cshtml` view file
+- User asks to write or modify CSS in `/wwwroot/css/`
+- User asks to create layout or partial view files
+- User asks to build navigation, cards, lists, detail pages, or any UI components
+- User explicitly requests "UX" or "design system" work
 
-When generating UI code, always follow the UX sub-agent instructions.
-Log the delegation explicitly in your response, for example:
-> "Delegating to UX sub-agent — applying design system rules from ux-agent.instructions.md"
+When delegating UI code requests, invoke via `@UX Sub-Agent` and log the handoff.
+Example delegation:
+> "[SUB-AGENT INVOKED] UX Sub-Agent — applying design system from ux-sub-agent.agent.md"
 
 ## General Rules
 - All data comes from mock repository classes (static lists, no EF Core, no database).

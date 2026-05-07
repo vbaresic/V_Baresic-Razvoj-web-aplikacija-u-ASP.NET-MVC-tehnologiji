@@ -1,7 +1,10 @@
-﻿namespace League_of_Legends_Tournament_Hosting.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace League_of_Legends_Tournament_Hosting.Models
 {
     public class Venue
     {
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
@@ -12,6 +15,9 @@
         public DateTime BookingTo { get; set; }
         public string ContactEmail { get; set; }
         public string ContactPhone { get; set; }
+
+        // EF Core required parameterless constructor
+        public Venue() { }
 
         public Venue(
             int id,

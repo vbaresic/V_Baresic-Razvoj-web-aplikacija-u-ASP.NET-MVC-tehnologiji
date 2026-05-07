@@ -1,23 +1,42 @@
+using League_of_Legends_Tournament_Hosting.Data;
 using League_of_Legends_Tournament_Hosting.Models;
 using League_of_Legends_Tournament_Hosting.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Controllers
 {
+    [Route("tim")]
     public class TeamsController : AppControllerBase
     {
-        public IActionResult Index()
+        private readonly TournamentDbContext _dbContext;
+
+        public TeamsController(TournamentDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        [Route("")]
+        [Route("pregled")]
+        [Route("sve")]
+        public async Task<IActionResult> Index()
         {
             SetBreadcrumbs(
                 new BreadcrumbItem("Home", Url.Action("Index", "Home")),
                 new BreadcrumbItem("Teams", null));
 
-            var cards = MockRepository.Teams
+            var teams = await _dbContext.Teams
+                .Include(t => t.Coach)
+                .Include(t => t.Manager)
+                .Include(t => t.PlayersList)
                 .OrderBy(team => team.Name)
+                .ToListAsync();
+
+            var cards = teams
                 .Select(team => new EntityCardViewModel(
                     team.Name,
                     $"Coach: {team.Coach.Name}",
-                    $"{team.Players.Count} players · Manager: {team.Manager.Name} · {(team.IsRosterConfirmed ? "Roster confirmed" : "Roster open")}",
+                    $"{team.PlayersList.Count} players · Manager: {team.Manager.Name} · {(team.IsRosterConfirmed ? "Roster confirmed" : "Roster open")}",
                     "Open Team",
                     Url.Action(nameof(Details), new { id = team.Id }) ?? "#"))
                 .ToList();
@@ -27,9 +46,15 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
             return View(cards);
         }
 
-        public IActionResult Details(int id)
+        [Route("detalji/{id:int}")]
+        [Route("profil/{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            var team = MockRepository.GetTeam(id);
+            var team = await _dbContext.Teams
+                .Include(t => t.Coach)
+                .Include(t => t.Manager)
+                .Include(t => t.PlayersList)
+                .FirstOrDefaultAsync(t => t.Id == id);
             if (team is null)
             {
                 return NotFound();
@@ -40,7 +65,12 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                 new BreadcrumbItem("Teams", Url.Action(nameof(Index))),
                 new BreadcrumbItem(team.Name, null));
 
-            ViewData["RelatedTournaments"] = MockRepository.GetTournamentsForTeam(team.Id).ToList();
+            // Get tournaments where this team is registered
+            var relatedTournaments = await _dbContext.Tournaments
+                .Where(t => t.TeamsList.Any(tm => tm.Id == team.Id))
+                .ToListAsync();
+
+            ViewData["RelatedTournaments"] = relatedTournaments;
             return View(team);
         }
     }

@@ -1,11 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using League_of_Legends_Tournament_Hosting.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Register EF Core DbContext
+builder.Services.AddDbContext<TournamentDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("TournamentDbContext"),
+        opt => opt.MigrationsAssembly("League of Legends Tournament Hosting")));
+
 var app = builder.Build();
 
-League_of_Legends_Tournament_Hosting.DataSeeder.Seed();
+// Apply migrations and seed data on startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TournamentDbContext>();
+    dbContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

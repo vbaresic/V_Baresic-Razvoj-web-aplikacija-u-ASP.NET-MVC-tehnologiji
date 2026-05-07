@@ -1,0 +1,68 @@
+@model Player
+@{
+    ViewData["Title"] = "Edit Player";
+}
+
+<section class="form-page">
+    <div class="content-card">
+        <h1>Edit Player</h1>
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GamerTag" class="control-label"></label>
+                <input asp-for="GamerTag" class="form-control" />
+                <span asp-validation-for="GamerTag" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Role" class="control-label"></label>
+                @Html.DropDownListFor(m => m.Role, Html.GetEnumSelectList<PlayerRole>(), "Select Role", new { @class = "form-control" })
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PreferredPosition" class="control-label"></label>
+                @Html.DropDownListFor(m => m.PreferredPosition, Html.GetEnumSelectList<Position>(), "Select Position", new { @class = "form-control" })
+                <span asp-validation-for="PreferredPosition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondaryPosition" class="control-label"></label>
+                @Html.DropDownListFor(m => m.SecondaryPosition, Html.GetEnumSelectList<Position>(), "Select Position", new { @class = "form-control" })
+                <span asp-validation-for="SecondaryPosition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JoinedAt" class="control-label"></label>
+                <input asp-for="JoinedAt" class="form-control" type="date" />
+                <span asp-validation-for="JoinedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountInformation.SummonerName" class="control-label"></label>
+                <input asp-for="AccountInformation.SummonerName" class="form-control" />
+                <span asp-validation-for="AccountInformation.SummonerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountInformation.RiotTag" class="control-label"></label>
+                <input asp-for="AccountInformation.RiotTag" class="form-control" />
+                <span asp-validation-for="AccountInformation.RiotTag" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountInformation.Region" class="control-label"></label>
+                @Html.DropDownListFor(m => m.AccountInformation.Region, Html.GetEnumSelectList<Region>(), "Select Region", new { @class = "form-control" })
+                <span asp-validation-for="AccountInformation.Region" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountInformation.LeagueTier" class="control-label"></label>
+                @Html.DropDownListFor(m => m.AccountInformation.LeagueTier, Html.GetEnumSelectList<LeagueTier>(), "Select Tier", new { @class = "form-control" })
+                <span asp-validation-for="AccountInformation.LeagueTier" class="text-danger"></span>
+            </div>
+            <div class="form-actions">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>

@@ -1,7 +1,12 @@
-﻿namespace League_of_Legends_Tournament_Hosting.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace League_of_Legends_Tournament_Hosting.Models
 {
     public class Player
     {
+        [Key]
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -17,6 +22,12 @@
         public DateTime JoinedAt { get; set; }
 
         public AccountInformation AccountInformation { get; set; }
+
+        // Navigation property for many-to-many relationship with Team
+        public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
+
+        // EF Core required parameterless constructor
+        public Player() { }
 
         public Player(int id, string name, string gamerTag, PlayerRole role, Position preferredPosition, Position secondaryPosition, AccountInformation accountInformation, DateTime joinedAt)
         {

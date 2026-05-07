@@ -1,18 +1,32 @@
+using League_of_Legends_Tournament_Hosting.Data;
 using League_of_Legends_Tournament_Hosting.Models;
 using League_of_Legends_Tournament_Hosting.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Controllers
 {
+    [Route("sponzor")]
     public class SponsorsController : AppControllerBase
     {
-        public IActionResult Index()
+        private readonly TournamentDbContext _dbContext;
+
+        public SponsorsController(TournamentDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        [Route("")]
+        [Route("pregled")]
+        [Route("sve")]
+        public async Task<IActionResult> Index()
         {
             SetBreadcrumbs(
                 new BreadcrumbItem("Home", Url.Action("Index", "Home")),
                 new BreadcrumbItem("Sponsors", null));
 
-            var cards = MockRepository.Sponsors
+            var cards = await _dbContext.Sponsors
+                .AsNoTracking()
                 .OrderBy(sponsor => sponsor.Name)
                 .Select(sponsor => new EntityCardViewModel(
                     sponsor.Name,
@@ -20,16 +34,21 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                     sponsor.ContactPhone,
                     "View Details",
                     Url.Action(nameof(Details), new { id = sponsor.Id }) ?? "#"))
-                .ToList();
+                .ToListAsync();
 
             ViewData["PageTitle"] = "Sponsors";
             ViewData["EntityCount"] = cards.Count;
             return View(cards);
         }
 
-        public IActionResult Details(int id)
+        [Route("detalji/{id:int}")]
+        [Route("info/{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            var sponsor = MockRepository.GetSponsor(id);
+            var sponsor = await _dbContext.Sponsors
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == id);
+            
             if (sponsor is null)
             {
                 return NotFound();
@@ -40,7 +59,11 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                 new BreadcrumbItem("Sponsors", Url.Action(nameof(Index))),
                 new BreadcrumbItem(sponsor.Name, null));
 
-            ViewData["SponsorTournaments"] = MockRepository.GetTournamentsForSponsor(sponsor.Id).ToList();
+            ViewData["SponsorTournaments"] = await _dbContext.Tournaments
+                .AsNoTracking()
+                .Where(t => t.SponsorsList.Any(s => s.Id == sponsor.Id))
+                .ToListAsync();
+            
             return View(sponsor);
         }
     }

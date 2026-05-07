@@ -1,39 +1,65 @@
-﻿namespace League_of_Legends_Tournament_Hosting.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace League_of_Legends_Tournament_Hosting.Models
 {
     public class Team
     {
         public const int MinimumPlayersCount = 5;
         public const int MaximumPlayersCount = 7;
 
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public Coach Coach { get; set; }
-        public Manager Manager { get; set; }
+
+        // Foreign Keys
+        public int CoachId { get; set; }
+        public int ManagerId { get; set; }
+
+        // Navigation Properties
+        [ForeignKey("CoachId")]
+        public virtual Coach Coach { get; set; }
+
+        [ForeignKey("ManagerId")]
+        public virtual Manager Manager { get; set; }
+
         public DateTime RegisteredAt { get; set; }
 
-        private readonly List<Player> _players = new();
-        private bool _rosterConfirmed;
+        // EF Core collection for many-to-many relationship
+        public virtual ICollection<Player> PlayersList { get; set; } = new List<Player>();
 
-        public bool IsRosterConfirmed => _rosterConfirmed;
+        // Roster state tracking
+        public bool IsRosterConfirmed { get; set; }
 
-        public IReadOnlyList<Player> Players => _players.AsReadOnly();
+        // Business logic properties - work directly with EF collection
+        [NotMapped]
+        public IReadOnlyCollection<Player> Players =>
+            (PlayersList as IReadOnlyCollection<Player>) ?? new List<Player>();
 
-        public IReadOnlyList<Player> ConfirmedPlayers
+        [NotMapped]
+        public IReadOnlyCollection<Player> ConfirmedPlayers
         {
             get
             {
-                if (!_rosterConfirmed)
+                if (!IsRosterConfirmed)
                     throw new InvalidOperationException("Roster is not confirmed yet. Confirm roster first to view finalized player set.");
 
-                return _players.AsReadOnly();
+                return (PlayersList as IReadOnlyCollection<Player>) ?? new List<Player>();
             }
         }
 
+        [NotMapped]
         public IEnumerable<Player> StartingPlayers =>
-            _players.Where(p => p.Role == PlayerRole.Player || p.Role == PlayerRole.TeamCaptain);
+            (PlayersList ?? Enumerable.Empty<Player>())
+                .Where(p => p.Role == PlayerRole.Player || p.Role == PlayerRole.TeamCaptain);
 
+        [NotMapped]
         public IEnumerable<Player> SubstitutePlayers =>
-            _players.Where(p => p.Role == PlayerRole.Substitute);
+            (PlayersList ?? Enumerable.Empty<Player>())
+                .Where(p => p.Role == PlayerRole.Substitute);
+
+        // EF Core required parameterless constructor
+        public Team() { }
 
         public Team(int id, string name, Coach coach, Manager manager, IEnumerable<Player> players, DateTime registeredAt)
         {
@@ -41,7 +67,10 @@
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Coach = coach ?? throw new ArgumentNullException(nameof(coach));
             Manager = manager ?? throw new ArgumentNullException(nameof(manager));
+            CoachId = coach.Id;
+            ManagerId = manager.Id;
             RegisteredAt = registeredAt;
+            IsRosterConfirmed = false;
 
             if (players == null)
                 throw new ArgumentNullException(nameof(players));
@@ -50,34 +79,35 @@
             if (playerList.Count < MinimumPlayersCount || playerList.Count > MaximumPlayersCount)
                 throw new ArgumentException($"A team must have between {MinimumPlayersCount} and {MaximumPlayersCount} players (inclusive).", nameof(players));
 
-            _players.AddRange(playerList);
+            PlayersList = playerList;
         }
 
         public void AddPlayer(Player player)
         {
             EnsureRosterNotConfirmed();
             if (player == null) throw new ArgumentNullException(nameof(player));
-            if (_players.Count >= MaximumPlayersCount)
+            if ((PlayersList?.Count ?? 0) >= MaximumPlayersCount)
                 throw new InvalidOperationException($"Cannot add more than {MaximumPlayersCount} players.");
 
-            _players.Add(player);
+            PlayersList?.Add(player);
         }
 
         public bool RemovePlayer(Player player)
         {
             EnsureRosterNotConfirmed();
             if (player == null) throw new ArgumentNullException(nameof(player));
-            return _players.Remove(player);
+            return PlayersList?.Remove(player) ?? false;
         }
 
         public void ConfirmRoster()
         {
-            if (_players.Count < MinimumPlayersCount || _players.Count > MaximumPlayersCount)
+            var playerCount = PlayersList?.Count ?? 0;
+            if (playerCount < MinimumPlayersCount || playerCount > MaximumPlayersCount)
                 throw new InvalidOperationException($"Roster must have between {MinimumPlayersCount} and {MaximumPlayersCount} players.");
 
-            var playerRoleCount = _players.Count(p => p.Role == PlayerRole.Player);
-            var captainRoleCount = _players.Count(p => p.Role == PlayerRole.TeamCaptain);
-            var substituteRoleCount = _players.Count(p => p.Role == PlayerRole.Substitute);
+            var playerRoleCount = (PlayersList?.Count(p => p.Role == PlayerRole.Player)) ?? 0;
+            var captainRoleCount = (PlayersList?.Count(p => p.Role == PlayerRole.TeamCaptain)) ?? 0;
+            var substituteRoleCount = (PlayersList?.Count(p => p.Role == PlayerRole.Substitute)) ?? 0;
 
             if (playerRoleCount != 4)
                 throw new InvalidOperationException("Confirmed roster must contain exactly 4 players with Role == Player.");
@@ -85,28 +115,28 @@
             if (captainRoleCount != 1)
                 throw new InvalidOperationException("Confirmed roster must contain exactly 1 player with Role == TeamCaptain.");
 
-            if (playerRoleCount + captainRoleCount + substituteRoleCount != _players.Count)
+            if (playerRoleCount + captainRoleCount + substituteRoleCount != playerCount)
                 throw new InvalidOperationException("All roster members must have Player, TeamCaptain, or Substitute role.");
 
-            _rosterConfirmed = true;
+            IsRosterConfirmed = true;
         }
 
         public void UnconfirmRoster()
         {
             EnsureRosterNotConfirmed(false);
-            _rosterConfirmed = false;
+            IsRosterConfirmed = false;
         }
 
         private void EnsureRosterNotConfirmed(bool expected = true)
         {
-            if (expected && _rosterConfirmed)
+            if (expected && IsRosterConfirmed)
                 throw new InvalidOperationException("Roster is confirmed and cannot be modified until unconfirmed.");
 
-            if (!expected && !_rosterConfirmed)
+            if (!expected && !IsRosterConfirmed)
                 throw new InvalidOperationException("Roster is not confirmed.");
         }
 
         public bool IsRosterSizeValid() =>
-            _players.Count >= MinimumPlayersCount && _players.Count <= MaximumPlayersCount;
+            (PlayersList?.Count ?? 0) >= MinimumPlayersCount && (PlayersList?.Count ?? 0) <= MaximumPlayersCount;
     }
 }

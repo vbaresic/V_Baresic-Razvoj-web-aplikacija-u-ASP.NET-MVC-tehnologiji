@@ -1,43 +1,62 @@
+using League_of_Legends_Tournament_Hosting.Data;
 using League_of_Legends_Tournament_Hosting.Models;
 using League_of_Legends_Tournament_Hosting.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Controllers
 {
+    [Route("turnir")]
     public class TournamentsController : AppControllerBase
     {
-        public IActionResult Index()
+        private readonly TournamentDbContext _dbContext;
+
+        public TournamentsController(TournamentDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        [Route("")]
+        [Route("pregled")]
+        [Route("lista")]
+        public async Task<IActionResult> Index()
         {
             SetBreadcrumbs(
                 new BreadcrumbItem("Home", Url.Action("Index", "Home")),
                 new BreadcrumbItem("Tournaments", null));
 
-            var cards = MockRepository.Tournaments
+            var tournaments = await _dbContext.Tournaments
+                .Include(t => t.Venue)
+                .Include(t => t.TeamsList)
+                .Include(t => t.SponsorsList)
                 .OrderBy(tournament => tournament.StartDate)
+                .ToListAsync();
+
+            var cards = tournaments
                 .Select(tournament =>
                 {
                     var stageNumber = tournament.Type == TournamentType.Preliminary ? 1 :
                         tournament.Type == TournamentType.Quarterfinal || tournament.Type == TournamentType.Semifinal ? 2 :
                         3;
 
-                    var teamPreviewNames = tournament.Teams
+                    var teamPreviewNames = tournament.TeamsList
                         .Select(team => team.Name)
                         .Take(2)
                         .ToList();
 
-                    var teamPreviewLinks = tournament.Teams
+                    var teamPreviewLinks = tournament.TeamsList
                         .Take(2)
                         .Select(team => new TournamentTeamPreviewViewModel(
                             team.Name,
                             Url.Action("Details", "Teams", new { id = team.Id }) ?? "#"))
                         .ToList();
 
-                    var additionalTeamCount = Math.Max(0, tournament.Teams.Count - teamPreviewNames.Count);
+                    var additionalTeamCount = Math.Max(0, tournament.TeamsList.Count - teamPreviewNames.Count);
 
-                    var teamsSummary = tournament.Teams.Count switch
+                    var teamsSummary = tournament.TeamsList.Count switch
                     {
                         0 => $"0 / {Tournament.MaximumTeamsCount} teams",
-                        _ when tournament.Teams.Count >= Tournament.MaximumTeamsCount => $"{Tournament.MaximumTeamsCount} / {Tournament.MaximumTeamsCount} teams (Full)",
+                        _ when tournament.TeamsList.Count >= Tournament.MaximumTeamsCount => $"{Tournament.MaximumTeamsCount} / {Tournament.MaximumTeamsCount} teams (Full)",
                         _ => $"{tournament.Teams.Count} / {Tournament.MaximumTeamsCount} teams"
                     };
 
@@ -114,9 +133,14 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
             return View(cards);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var tournament = MockRepository.GetTournament(id);
+            var tournament = await _dbContext.Tournaments
+                .Include(t => t.Venue)
+                .Include(t => t.TeamsList)
+                .Include(t => t.SponsorsList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
             if (tournament is null)
             {
                 return NotFound();
