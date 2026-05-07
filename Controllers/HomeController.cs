@@ -62,24 +62,24 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                 .ToListAsync();
 
             var topCompetitors = teams
-                .OrderByDescending(team => team.ConfirmedPlayers.Count)
+                .OrderByDescending(team => team.Players.Count())
                 .ThenByDescending(team => team.RegisteredAt)
                 .ThenBy(team => team.Name)
                 .Select((team, index) => new HomeSpotlightCardViewModel(
                     team.Name,
                     $"Rank #{index + 1}",
-                    $"Led by {team.Coach.Name} with captain {team.ConfirmedPlayers.FirstOrDefault(player => player.Role == PlayerRole.TeamCaptain)?.GamerTag ?? "TBD"}.",
+                    $"Led by {team.Coach.Name} with captain {team.Players.FirstOrDefault(player => player.Role == PlayerRole.TeamCaptain)?.GamerTag ?? "TBD"}.",
                     index == 0 ? "Top contender" : "Contender",
                     "purple",
                     "crown",
                     index == 0 ? "Challenge Team" : "View Team",
                     Url.Action("Details", "Teams", new { id = team.Id }) ?? "#",
                     isFeatured: index == 0,
-                    metricLabel: "Confirmed roster",
-                    metricValue: $"{team.ConfirmedPlayers.Count}/{Team.MaximumPlayersCount}",
-                    progressValue: team.ConfirmedPlayers.Count > 0 ? team.ConfirmedPlayers.Count * 100 / Team.MaximumPlayersCount : 0,
+                    metricLabel: "Current roster",
+                    metricValue: $"{team.Players.Count()}/{Team.MaximumPlayersCount}",
+                    progressValue: team.Players.Count() > 0 ? team.Players.Count() * 100 / Team.MaximumPlayersCount : 0,
                     progressLabel: "Roster strength",
-                    progressCaption: index == 0 ? "Featured squad in the bracket" : "Locked and tournament-ready"))
+                    progressCaption: index == 0 ? "Featured squad in the bracket" : "Tournament-ready squad"))
                 .Take(3)
                 .ToList();
 

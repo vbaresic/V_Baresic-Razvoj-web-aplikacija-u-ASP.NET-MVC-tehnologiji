@@ -278,3 +278,4 @@ D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\bin\Debug\net10.0
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\bin\Debug\net10.0\runtimes\win\lib\net9.0\System.Windows.Extensions.dll
 D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\League o.7E5980E5.Up2Date
+D:\ASP .NET ALL\2025-2026\League of Legends Tournament Hosting\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
