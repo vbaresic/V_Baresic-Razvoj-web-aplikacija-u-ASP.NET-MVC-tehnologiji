@@ -1,0 +1,50 @@
+@model Manager
+@{
+    ViewData["Title"] = $"Edit {Model.Name}";
+}
+
+<section class="form-page form-page--edit">
+    <div class="form-header">
+        <h1>Edit Manager</h1>
+        <p class="section-copy">Update team manager information.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Edit" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" required />
+                <span asp-validation-for="Name" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="HiredAt" class="form-label"></label>
+                <input asp-for="HiredAt" type="datetime-local" class="form-control form-input date-time-input" required />
+                <span asp-validation-for="HiredAt" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="YearsOfExperience" class="form-label"></label>
+                <input asp-for="YearsOfExperience" type="number" class="form-control form-input" min="0" required />
+                <span asp-validation-for="YearsOfExperience" class="form-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/form-validation.js"></script>
+    <script src="~/js/date-time-picker.js"></script>
+}

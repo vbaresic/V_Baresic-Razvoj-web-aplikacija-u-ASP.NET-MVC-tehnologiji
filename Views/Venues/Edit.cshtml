@@ -1,0 +1,64 @@
+@model Venue
+@{
+    ViewData["Title"] = $"Edit {Model.Name}";
+}
+
+<section class="form-page form-page--edit">
+    <div class="form-header">
+        <h1>Edit Venue</h1>
+        <p class="section-copy">Update venue information and availability.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Edit" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" required />
+                <span asp-validation-for="Name" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control form-input" required />
+                <span asp-validation-for="Address" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control form-input" required />
+                <span asp-validation-for="City" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Capacity" class="form-label"></label>
+                <input asp-for="Capacity" type="number" class="form-control form-input" min="1" required />
+                <span asp-validation-for="Capacity" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IsAvailable" class="form-label"></label>
+                <select asp-for="IsAvailable" class="form-control form-input">
+                    <option value="true">Available</option>
+                    <option value="false">Not Available</option>
+                </select>
+                <span asp-validation-for="IsAvailable" class="form-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/form-validation.js"></script>
+}

@@ -11,11 +11,24 @@
             <p class="section-copy">@ViewData["EntityCount"] players found. Filter talent by role, rank, and availability to build stronger rosters.</p>
         </div>
         <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Players" asp-action="Create">+ Add Player</a>
             <a class="section-cta" asp-controller="Teams" asp-action="Index">Open teams</a>
         </div>
     </div>
 
-    <div class="card-grid card-grid--spotlight card-grid--people card-grid--players">
+    <div class="search-bar-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search players by name or gamer tag..." aria-label="Search players" />
+        <button id="searchBtn" class="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>
+        </button>
+        <button id="clearSearchBtn" class="clear-search-btn" aria-label="Clear search" style="display: none;">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/></svg>
+        </button>
+    </div>
+    
+    <div id="searchMessage" class="search-message" style="display: none;"></div>
+
+    <div id="resultGrid" class="card-grid card-grid--spotlight card-grid--people card-grid--players">
         @foreach (var entry in Model.Select((card, index) => new { card, index }))
         {
             var badgeVariant = entry.index % 3 == 0 ? "green" : entry.index % 3 == 1 ? "orange" : "purple";
@@ -53,3 +66,57 @@
         }
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/js/ajax-search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchConfig = {
+                searchUrl: '@Url.Action("Search", "Players")',
+                resultGrid: '#resultGrid',
+                searchInput: '#searchInput',
+                searchBtn: '#searchBtn',
+                clearBtn: '#clearSearchBtn',
+                searchMessage: '#searchMessage',
+                cardTemplate: function(card, index) {
+                    const playerMeta = card.body.split('|').map(s => s.trim());
+                    const primaryRole = playerMeta[0] || 'Flex';
+                    const playerRank = playerMeta[1] || 'Unranked';
+                    const laneProfile = playerMeta[2] || '';
+                    const roleClass = 'role-' + primaryRole.toLowerCase().replace(/\s/g, '');
+                    const badgeVariant = index % 3 === 0 ? 'green' : index % 3 === 1 ? 'orange' : 'purple';
+                    
+                    return `
+                        <article class="spotlight-card people-card people-card--player people-card--${roleClass} spotlight-card--${badgeVariant}">
+                            <a class="people-card__hit-area" href="${card.linkUrl}" aria-label="Open ${card.title} details"></a>
+                            <div class="spotlight-card__glow"></div>
+                            <div class="spotlight-card__ribbon">Player profile</div>
+                            <div class="spotlight-card__header">
+                                <div class="spotlight-card__badge spotlight-card__badge--${badgeVariant}">
+                                    <span class="spotlight-card__badge-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H5z" fill="currentColor"/></svg>
+                                    </span>
+                                    <span>${primaryRole}</span>
+                                </div>
+                                <div class="spotlight-card__metric">
+                                    <span>${playerRank}</span>
+                                    <small>Rank</small>
+                                </div>
+                            </div>
+                            <div class="spotlight-card__body">
+                                <h3>${card.title}</h3>
+                                <p>${card.subtitle}</p>
+                            </div>
+                            <div class="people-card__role-band" aria-label="Primary role">
+                                <span class="people-card__role-label">Lane profile</span>
+                                <strong>${laneProfile}</strong>
+                            </div>
+                        </article>
+                    `;
+                }
+            };
+            
+            initializeAjaxSearch(searchConfig);
+        });
+    </script>
+}

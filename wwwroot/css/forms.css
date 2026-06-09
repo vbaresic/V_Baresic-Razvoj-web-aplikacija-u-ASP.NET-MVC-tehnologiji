@@ -1,0 +1,507 @@
+/* Form Pages & CRUD Styling */
+.form-page {
+    padding: 2rem 0;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+}
+
+.form-header .section-copy {
+    font-size: 1rem;
+    color: #666;
+}
+
+.form-header .section-copy.warning {
+    color: #d9534f;
+    font-weight: 500;
+}
+
+.form-card {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-card--danger {
+    border-left: 4px solid #d9534f;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.form-input.is-invalid {
+    border-color: #d9534f;
+    background-color: #fff8f8;
+}
+
+.form-error {
+    display: none;
+    color: #d9534f;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+.form-error[style*="display: block"] {
+    display: block !important;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #0066cc;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0052a3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+}
+
+/* Delete Confirmation */
+.delete-confirmation {
+    text-align: center;
+}
+
+.delete-confirmation h2 {
+    color: #d9534f;
+    margin-bottom: 1rem;
+}
+
+.delete-info {
+    background: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.delete-info p {
+    margin: 0.75rem 0;
+}
+
+.delete-form {
+    margin-top: 2rem;
+}
+
+/* Search Bar */
+.search-bar-container {
+    margin-bottom: 2rem;
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.search-bar:focus-within {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    font-size: 1rem;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+.search-btn,
+.clear-search-btn {
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.search-btn:hover {
+    color: #0066cc;
+}
+
+.clear-search-btn:hover {
+    color: #d9534f;
+}
+
+.search-message {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.search-message.loading {
+    color: #0066cc;
+    background: #e6f2ff;
+}
+
+.search-message.success {
+    color: #28a745;
+    background: #e6ffe6;
+}
+
+.search-message.info {
+    color: #666;
+    background: #f5f5f5;
+}
+
+.search-message.error {
+    color: #d9534f;
+    background: #ffe6e6;
+}
+
+.no-results {
+    text-align: center;
+    color: #999;
+    padding: 2rem;
+}
+
+/* Date/Time Picker */
+.date-time-picker-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.date-time-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.date-time-display-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.date-time-display-input:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.date-time-picker-btn {
+    padding: 0.75rem 1rem;
+    background: #f5f5f5;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.date-time-picker-btn:hover {
+    background: #e6f2ff;
+    border-color: #0066cc;
+}
+
+.date-time-hidden-input {
+    display: none !important;
+}
+
+.date-time-picker-modal {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    min-width: 280px;
+}
+
+.picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.picker-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+.picker-nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.picker-prev,
+.picker-next {
+    padding: 0.25rem 0.5rem;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.picker-prev:hover,
+.picker-next:hover {
+    background: #0066cc;
+    color: white;
+    border-color: #0066cc;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.weekday {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #666;
+    padding: 0.25rem 0;
+}
+
+.dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.date-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.date-day:hover:not(.other-month) {
+    background: #e6f2ff;
+    border-color: #0066cc;
+}
+
+.date-day.other-month {
+    color: #ccc;
+    cursor: not-allowed;
+    background: #fafafa;
+}
+
+.date-day.today {
+    font-weight: bold;
+    border-color: #0066cc;
+    background: #e6f2ff;
+}
+
+.date-day.selected {
+    background: #0066cc;
+    color: white;
+    border-color: #0066cc;
+}
+
+.time-picker-section {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.time-input-group {
+    flex: 1;
+}
+
+.time-input-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.time-input-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.time-separator {
+    font-weight: bold;
+    color: #999;
+    margin-top: 1.25rem;
+}
+
+.picker-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.btn-today,
+.btn-clear,
+.btn-ok {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    background: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-today:hover,
+.btn-clear:hover {
+    background: #e6f2ff;
+    border-color: #0066cc;
+    color: #0066cc;
+}
+
+.btn-ok {
+    background: #0066cc;
+    color: white;
+    border-color: #0066cc;
+}
+
+.btn-ok:hover {
+    background: #0052a3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .date-time-picker-modal {
+        min-width: calc(100vw - 2rem);
+        max-width: 320px;
+    }
+}

@@ -11,11 +11,25 @@
             <p class="section-copy">@ViewData["EntityCount"] coaches found. Review leadership profiles and jump directly to team assignments.</p>
         </div>
         <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Coaches" asp-action="Create">+ Add Coach</a>
             <a class="section-cta" asp-controller="Teams" asp-action="Index">Open teams</a>
         </div>
     </div>
 
-    <div class="card-grid card-grid--spotlight card-grid--people card-grid--coaches">
+    <div class="search-bar-container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search coaches by name or gamer tag..." />
+            <button id="searchBtn" class="search-btn" aria-label="Search">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm8.5 10.5l2.5 2.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </button>
+            <button id="clearSearchBtn" class="clear-search-btn" style="display:none;" aria-label="Clear search">×</button>
+        </div>
+        <div id="searchMessage" class="search-message"></div>
+    </div>
+
+    <div class="card-grid card-grid--spotlight card-grid--people card-grid--coaches" id="resultGrid">
         @foreach (var entry in Model.Select((card, index) => new { card, index }))
         {
             var badgeVariant = entry.index % 3 == 0 ? "blue" : entry.index % 3 == 1 ? "purple" : "green";
@@ -49,3 +63,52 @@
         }
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/js/ajax-search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchConfig = {
+                searchUrl: '@Url.Action("Search", "Coaches")',
+                resultGrid: '#resultGrid',
+                searchInput: '#searchInput',
+                searchBtn: '#searchBtn',
+                clearBtn: '#clearSearchBtn',
+                searchMessage: '#searchMessage',
+                cardTemplate: function(card, index) {
+                    const badgeVariant = index % 3 === 0 ? 'blue' : index % 3 === 1 ? 'purple' : 'green';
+                    return `
+                        <article class="spotlight-card people-card people-card--coach">
+                            <a class="people-card__hit-area" href="${card.linkUrl}" aria-label="Open ${card.title} details"></a>
+                            <div class="spotlight-card__glow"></div>
+                            <div class="spotlight-card__ribbon">Coach profile</div>
+                            <div class="spotlight-card__header">
+                                <div class="spotlight-card__badge spotlight-card__badge--${badgeVariant}">
+                                    <span class="spotlight-card__badge-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 1 1-5 5 5 5 0 0 1 5-5zm-7 16a7 7 0 0 1 14 0z" fill="currentColor"/></svg>
+                                    </span>
+                                    <span>${card.subtitle}</span>
+                                </div>
+                                <div class="spotlight-card__metric">
+                                    <span>Lead</span>
+                                    <small>Coach</small>
+                                </div>
+                            </div>
+                            <div class="spotlight-card__body">
+                                <h3>${card.title}</h3>
+                                <p>${card.subtitle}</p>
+                                <p>${card.body}</p>
+                            </div>
+                            <div class="people-card__role-band" aria-label="Role summary">
+                                <span class="people-card__role-label">Role</span>
+                                <strong>Team Captain - Coach</strong>
+                            </div>
+                        </article>
+                    `;
+                }
+            };
+            
+            initializeAjaxSearch(searchConfig);
+        });
+    </script>
+}

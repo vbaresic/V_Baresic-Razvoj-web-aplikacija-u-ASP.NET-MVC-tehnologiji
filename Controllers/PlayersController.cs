@@ -139,6 +139,65 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
             return View(player);
         }
 
+        [Route("obrisi/{id:int}")]
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var player = await _dbContext.Players
+                .FirstOrDefaultAsync(p => p.Id == id);
+            
+            if (player is null)
+            {
+                return NotFound();
+            }
+
+            SetBreadcrumbs(
+                new BreadcrumbItem("Home", Url.Action("Index", "Home")),
+                new BreadcrumbItem("Players", Url.Action(nameof(Index))),
+                new BreadcrumbItem(player.GamerTag, Url.Action(nameof(Details), new { id = player.Id })),
+                new BreadcrumbItem("Delete", null));
+
+            return View(player);
+        }
+
+        [Route("obrisi/{id:int}")]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var player = await _dbContext.Players.FindAsync(id);
+            if (player is not null)
+            {
+                _dbContext.Players.Remove(player);
+                await _dbContext.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Route("pretraga")]
+        [HttpGet]
+        public async Task<IActionResult> Search(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return BadRequest();
+            }
+
+            var searchResults = await _dbContext.Players
+                .AsNoTracking()
+                .Where(p => p.GamerTag.Contains(query) || p.Name.Contains(query))
+                .OrderBy(p => p.GamerTag)
+                .Select(p => new EntityCardViewModel(
+                    p.GamerTag,
+                    p.Name,
+                    $"{p.Role}|{p.AccountInformation.LeagueTier}|{p.PreferredPosition} / {p.SecondaryPosition}",
+                    "View Details",
+                    Url.Action(nameof(Details), new { id = p.Id }) ?? "#"))
+                .ToListAsync();
+
+            return Json(searchResults);
+        }
+
         private bool PlayerExists(int id)
         {
             return _dbContext.Players.Any(e => e.Id == id);

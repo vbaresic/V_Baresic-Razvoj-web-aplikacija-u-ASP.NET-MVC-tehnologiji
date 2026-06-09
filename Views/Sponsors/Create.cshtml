@@ -1,0 +1,72 @@
+@model Sponsor
+@{
+    ViewData["Title"] = "Create Sponsor";
+}
+
+<section class="form-page form-page--create">
+    <div class="form-header">
+        <h1>Create New Sponsor</h1>
+        <p class="section-copy">Add a new sponsor to the tournament system.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Create" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" placeholder="Enter sponsor name" required />
+                <span asp-validation-for="Name" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Website" class="form-label"></label>
+                <input asp-for="Website" type="url" class="form-control form-input" placeholder="https://example.com" required />
+                <span asp-validation-for="Website" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ContactEmail" class="form-label"></label>
+                <input asp-for="ContactEmail" type="email" class="form-control form-input" placeholder="contact@sponsor.com" required />
+                <span asp-validation-for="ContactEmail" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ContactPhone" class="form-label"></label>
+                <input asp-for="ContactPhone" type="tel" class="form-control form-input" placeholder="+1 (555) 000-0000" required />
+                <span asp-validation-for="ContactPhone" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SponsorshipAmount" class="form-label"></label>
+                <input asp-for="SponsorshipAmount" type="number" step="0.01" class="form-control form-input" placeholder="Amount" min="0" required />
+                <span asp-validation-for="SponsorshipAmount" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ContractStart" class="form-label"></label>
+                <input asp-for="ContractStart" type="datetime-local" class="form-control form-input date-time-input" required />
+                <span asp-validation-for="ContractStart" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ContractEnd" class="form-label"></label>
+                <input asp-for="ContractEnd" type="datetime-local" class="form-control form-input date-time-input" required />
+                <span asp-validation-for="ContractEnd" class="form-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Sponsor</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/form-validation.js"></script>
+    <script src="~/js/date-time-picker.js"></script>
+}
