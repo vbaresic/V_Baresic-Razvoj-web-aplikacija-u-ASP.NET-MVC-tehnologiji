@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="League of Legends Tournament Hosting.csproj" />
+  <Project Path="League of Legends Tournament Hosting.Tests/League of Legends Tournament Hosting.Tests.csproj" />
 </Solution>

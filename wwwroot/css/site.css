@@ -633,6 +633,41 @@ a:hover {
   border: 2px solid var(--bg);
 }
 
+.topbar-btn--text {
+  width: auto;
+  height: 40px;
+  padding: 0 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.topbar-logout-form {
+  margin: 0;
+  display: inline-flex;
+}
+
+.topbar-logout-form .topbar-btn--text {
+  font-family: inherit;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.topbar-user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .site-main,
 .site-footer {
   padding: 1.5rem 1.5rem 1.5rem;

@@ -6,12 +6,34 @@ namespace League_of_Legends_Tournament_Hosting.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Sponsor name is required")]
+        [StringLength(150, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 150 characters")]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "Website is required")]
+        [Url(ErrorMessage = "Invalid website URL")]
+        [StringLength(500)]
         public string Website { get; set; }
+
+        [Required(ErrorMessage = "Contact email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string ContactEmail { get; set; }
+
+        [Required(ErrorMessage = "Contact phone is required")]
+        [Phone(ErrorMessage = "Invalid phone number")]
         public string ContactPhone { get; set; }
+
+        [Required(ErrorMessage = "Sponsorship amount is required")]
+        [Range(0, 10000000, ErrorMessage = "Sponsorship amount must be non-negative")]
         public decimal SponsorshipAmount { get; set; }
+
+        [Required(ErrorMessage = "Contract start date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime ContractStart { get; set; }
+
+        [Required(ErrorMessage = "Contract end date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime ContractEnd { get; set; }
 
         // EF Core required parameterless constructor

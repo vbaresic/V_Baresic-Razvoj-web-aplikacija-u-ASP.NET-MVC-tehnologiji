@@ -1,0 +1,138 @@
+@model Tournament
+@using League_of_Legends_Tournament_Hosting.Models
+@{
+    ViewData["Title"] = $"Edit {Model.Name}";
+}
+
+<section class="form-page form-page--edit">
+    <div class="form-header">
+        <h1>Edit Tournament</h1>
+        <p class="section-copy">Update tournament details and configuration.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Edit" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" />
+                <span asp-validation-for="Name" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control form-input" rows="4"></textarea>
+                <span asp-validation-for="Description" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Type" class="form-label"></label>
+                <select asp-for="Type" class="form-control form-input">
+                    @foreach (var t in (TournamentType[])ViewBag.TournamentTypes)
+                    {
+                        <option value="@t">@t</option>
+                    }
+                </select>
+                <span asp-validation-for="Type" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Format" class="form-label"></label>
+                <select asp-for="Format" class="form-control form-input">
+                    @foreach (var f in (TournamentFormat[])ViewBag.TournamentFormats)
+                    {
+                        <option value="@f">@f</option>
+                    }
+                </select>
+                <span asp-validation-for="Format" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" class="form-control form-input">
+                    @foreach (var s in (TournamentStatus[])ViewBag.TournamentStatuses)
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </select>
+                <span asp-validation-for="Status" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PrizePool" class="form-label"></label>
+                <input asp-for="PrizePool" type="number" step="0.01" min="0" max="10000000" class="form-control form-input" />
+                <span asp-validation-for="PrizePool" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StartDate" class="form-label"></label>
+                <input asp-for="StartDate" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="StartDate" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EndDate" class="form-label"></label>
+                <input asp-for="EndDate" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="EndDate" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="RegistrationDeadline" class="form-label"></label>
+                <input asp-for="RegistrationDeadline" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="RegistrationDeadline" class="form-error"></span>
+            </div>
+
+            @{
+                ViewData["FieldId"] = "VenueId";
+                ViewData["FieldLabel"] = "Venue";
+                ViewData["SearchUrl"] = "/mjesto/autocomplete";
+                ViewData["InitialId"] = Model.VenueId.ToString();
+                ViewData["InitialLabel"] = Model.Venue != null ? $"{Model.Venue.Name} — {Model.Venue.City}" : "";
+            }
+            @await Html.PartialAsync("_AutocompleteDropdown")
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </article>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <article class="content-card documents-card">
+            <h2>Tournament Documents</h2>
+            <p class="section-copy">Upload rulesets, brackets, or other files related to this tournament.</p>
+
+            <div data-documents-widget
+                 data-tournament-id="@Model.Id"
+                 data-upload-url="/turnir/dokumenti/@Model.Id/upload"
+                 data-list-url="/turnir/dokumenti/@Model.Id"
+                 data-delete-url-template="/turnir/dokumenti/obrisi/0">
+
+                <form class="tournament-dropzone dropzone" id="tournament-document-dropzone" aria-label="Upload tournament document"></form>
+
+                <ul class="document-list" data-document-list aria-live="polite"></ul>
+            </div>
+        </article>
+    }
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/form-validation.js"></script>
+    <script src="~/js/date-time-picker.js"></script>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" />
+        <link rel="stylesheet" href="~/css/tournament-documents.css" asp-append-version="true" />
+        <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+        <script src="~/js/tournament-documents.js" asp-append-version="true"></script>
+    }
+}

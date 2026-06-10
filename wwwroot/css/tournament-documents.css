@@ -1,0 +1,132 @@
+/* Tournament Documents — Dropzone upload widget & uploaded files list */
+
+.documents-card {
+  margin-top: 1.5rem;
+}
+
+.documents-card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.documents-card .section-copy {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.tournament-dropzone.dropzone {
+  min-height: 140px;
+  padding: 1.25rem;
+  border: 2px dashed var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--muted);
+  font-family: inherit;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.tournament-dropzone.dropzone:hover,
+.tournament-dropzone.dropzone.dz-drag-hover {
+  border-color: var(--accent);
+  background: var(--panel-strong);
+}
+
+.tournament-dropzone.dropzone .dz-message {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 1.5rem 0;
+}
+
+.tournament-dropzone.dropzone .dz-preview .dz-image {
+  border-radius: 10px;
+  background: var(--panel-strong);
+}
+
+.tournament-dropzone.dropzone .dz-preview .dz-details {
+  color: var(--text);
+}
+
+.tournament-dropzone.dropzone .dz-preview .dz-error-message {
+  background: var(--danger);
+}
+
+.document-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.document-list__empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 1rem 0 0;
+}
+
+.document-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.document-list__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.document-list__name {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-list__name:hover {
+  color: var(--accent);
+}
+
+.document-list__meta {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.document-list__delete {
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 92, 122, 0.4);
+  background: rgba(255, 92, 122, 0.12);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.document-list__delete:hover {
+  background: rgba(255, 92, 122, 0.22);
+  border-color: var(--danger);
+}
+
+@media (max-width: 768px) {
+  .document-list__item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .document-list__delete {
+    align-self: flex-end;
+  }
+}

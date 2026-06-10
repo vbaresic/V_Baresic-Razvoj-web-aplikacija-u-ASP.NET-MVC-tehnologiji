@@ -9,17 +9,41 @@ namespace League_of_Legends_Tournament_Hosting.Models
 
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+
+        [Required(ErrorMessage = "Tournament name is required")]
+        [StringLength(150, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 150 characters")]
+        public string Name { get; set; } = null!;
+
+        [Required(ErrorMessage = "Description is required")]
+        [StringLength(1000, MinimumLength = 5, ErrorMessage = "Description must be between 5 and 1000 characters")]
+        public string Description { get; set; } = null!;
+
+        [Required(ErrorMessage = "Tournament type is required")]
         public TournamentType Type { get; set; }
+
+        [Required(ErrorMessage = "Tournament format is required")]
         public TournamentFormat Format { get; set; }
+
         public TournamentStatus Status { get; set; }
+
+        [Required(ErrorMessage = "Prize pool is required")]
+        [Range(0, 10000000, ErrorMessage = "Prize pool must be between 0 and 10,000,000")]
         public decimal PrizePool { get; set; }
+
+        [Required(ErrorMessage = "Start date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime StartDate { get; set; }
+
+        [Required(ErrorMessage = "End date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime EndDate { get; set; }
+
+        [Required(ErrorMessage = "Registration deadline is required")]
+        [DataType(DataType.DateTime)]
         public DateTime RegistrationDeadline { get; set; }
 
         // Foreign Key
+        [Required(ErrorMessage = "Venue is required")]
         public int VenueId { get; set; }
 
         // Navigation Properties

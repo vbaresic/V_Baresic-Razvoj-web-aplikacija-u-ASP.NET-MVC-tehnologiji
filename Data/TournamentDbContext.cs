@@ -1,9 +1,10 @@
 using League_of_Legends_Tournament_Hosting.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Data
 {
-    public class TournamentDbContext : DbContext
+    public class TournamentDbContext : IdentityDbContext<AppUser>
     {
         public DbSet<Coach> Coaches { get; set; }
         public DbSet<Manager> Managers { get; set; }
@@ -12,6 +13,7 @@ namespace League_of_Legends_Tournament_Hosting.Data
         public DbSet<Sponsor> Sponsors { get; set; }
         public DbSet<Venue> Venues { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<TournamentDocument> TournamentDocuments { get; set; }
 
         public TournamentDbContext(DbContextOptions<TournamentDbContext> options) : base(options)
         {

@@ -1,12 +1,14 @@
 using League_of_Legends_Tournament_Hosting.Data;
 using League_of_Legends_Tournament_Hosting.Models;
 using League_of_Legends_Tournament_Hosting.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Controllers
 {
     [Route("mjesto")]
+    [Authorize]
     public class VenuesController : AppControllerBase
     {
         private readonly TournamentDbContext _dbContext;
@@ -19,6 +21,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("")]
         [Route("pregled")]
         [Route("sve")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             SetBreadcrumbs(
@@ -70,6 +73,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("kreiraj")]
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
             SetBreadcrumbs(
@@ -83,6 +87,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("kreiraj")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create([Bind("Name,City,Address,Capacity,IsAvailable")] Venue venue)
         {
             if (ModelState.IsValid)
@@ -96,6 +101,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("uredi/{id:int}")]
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id)
         {
             var venue = await _dbContext.Venues
@@ -118,6 +124,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("uredi/{id:int}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,City,Address,Capacity,IsAvailable")] Venue venue)
         {
             if (id != venue.Id)
@@ -147,6 +154,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("obrisi/{id:int}")]
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var venue = await _dbContext.Venues
@@ -169,6 +177,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("obrisi/{id:int}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var venue = await _dbContext.Venues.FindAsync(id);
@@ -182,6 +191,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("pretraga")]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Search(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
@@ -203,6 +213,25 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                 .ToListAsync();
 
             return Json(searchResults);
+        }
+
+        [Route("autocomplete")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Autocomplete(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return Json(Array.Empty<object>());
+
+            var results = await _dbContext.Venues
+                .AsNoTracking()
+                .Where(v => v.Name.Contains(query) || v.City.Contains(query))
+                .OrderBy(v => v.Name)
+                .Take(10)
+                .Select(v => new { id = v.Id, label = $"{v.Name} — {v.City}" })
+                .ToListAsync();
+
+            return Json(results);
         }
 
         private bool VenueExists(int id)

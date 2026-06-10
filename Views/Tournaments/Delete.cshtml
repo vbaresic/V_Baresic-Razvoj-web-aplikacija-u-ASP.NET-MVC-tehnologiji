@@ -1,0 +1,38 @@
+@model Tournament
+@using League_of_Legends_Tournament_Hosting.Models
+@{
+    ViewData["Title"] = $"Delete {Model.Name}";
+}
+
+<section class="form-page form-page--delete">
+    <div class="form-header">
+        <h1>Delete Tournament</h1>
+        <p class="section-copy warning">This action cannot be undone. Please confirm before deleting.</p>
+    </div>
+
+    <article class="content-card form-card form-card--danger">
+        <div class="delete-confirmation">
+            <h2>Are you sure?</h2>
+            <p>You are about to delete the following tournament:</p>
+
+            <div class="delete-info">
+                <p><strong>Name:</strong> @Model.Name</p>
+                <p><strong>Description:</strong> @(Model.Description.Length > 100 ? Model.Description.Substring(0, 100) + "…" : Model.Description)</p>
+                <p><strong>Type:</strong> @Model.Type</p>
+                <p><strong>Format:</strong> @Model.Format</p>
+                <p><strong>Status:</strong> @Model.Status</p>
+                <p><strong>Prize Pool:</strong> @Model.PrizePool.ToString("C")</p>
+                <p><strong>Start Date:</strong> @Model.StartDate.ToString("dd MMM yyyy HH:mm")</p>
+                <p><strong>End Date:</strong> @Model.EndDate.ToString("dd MMM yyyy HH:mm")</p>
+                <p><strong>Venue:</strong> @(Model.Venue != null ? $"{Model.Venue.Name} — {Model.Venue.City}" : "N/A")</p>
+            </div>
+
+            <form asp-action="Delete" method="post" class="delete-form">
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </article>
+</section>

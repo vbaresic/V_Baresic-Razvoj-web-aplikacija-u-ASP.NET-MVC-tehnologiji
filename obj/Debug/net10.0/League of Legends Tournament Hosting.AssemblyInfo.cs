@@ -10,11 +10,12 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("eded30b2-0231-4258-9416-4050173bda7c")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("League of Legends Tournament Hosting")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2bc7a37eeb6d35fa08a9cc51e0d50e05a7edd1f8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3957b92403c773ec279f3a3296df144de896fd07")]
 [assembly: System.Reflection.AssemblyProductAttribute("League of Legends Tournament Hosting")]
 [assembly: System.Reflection.AssemblyTitleAttribute("League of Legends Tournament Hosting")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

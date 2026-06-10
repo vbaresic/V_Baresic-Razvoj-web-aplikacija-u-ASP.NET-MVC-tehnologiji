@@ -11,10 +11,25 @@
             <p class="section-copy">@ViewData["EntityCount"] tournaments found. Track stage, format, and live status from one operations view.</p>
         </div>
         <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Tournaments" asp-action="Create">+ Add Tournament</a>
             <a class="section-cta" asp-controller="Venues" asp-action="Index">Check venues</a>
         </div>
     </div>
 
+    <div class="search-bar-container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search tournaments by name, venue or description..." />
+            <button id="searchBtn" class="search-btn" aria-label="Search">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm8.5 10.5l2.5 2.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </button>
+            <button id="clearSearchBtn" class="clear-search-btn" style="display:none;" aria-label="Clear search">×</button>
+        </div>
+        <div id="searchMessage" class="search-message"></div>
+    </div>
+
+    <div id="resultGrid">
     @if (!Model.Any())
     {
         <article class="content-card tournament-empty-state" role="status" aria-live="polite">
@@ -137,9 +152,11 @@
             }
         </div>
     }
+    </div>
 </section>
 
 @section Scripts {
+    <script src="~/js/ajax-search.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const cards = document.querySelectorAll(".tournament-card");
@@ -152,6 +169,28 @@
                     });
                 });
             });
+
+            const searchConfig = {
+                searchUrl: '@Url.Action("Search", "Tournaments")',
+                resultGrid: '#resultGrid',
+                searchInput: '#searchInput',
+                searchBtn: '#searchBtn',
+                clearBtn: '#clearSearchBtn',
+                searchMessage: '#searchMessage',
+                cardTemplate: function (card) {
+                    return `
+                        <article class="tournament-card content-card">
+                            <div class="tournament-card__header">
+                                <h3>${card.title}</h3>
+                                <span class="tournament-card__venue">${card.subtitle}</span>
+                            </div>
+                            <p class="tournament-card__body">${card.body}</p>
+                            <a class="tournament-card__link" href="${card.linkUrl}">View Details</a>
+                        </article>
+                    `;
+                }
+            };
+            initializeAjaxSearch(searchConfig);
         });
     </script>
 }

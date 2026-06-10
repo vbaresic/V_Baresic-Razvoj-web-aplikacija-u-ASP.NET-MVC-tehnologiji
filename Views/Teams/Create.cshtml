@@ -1,0 +1,61 @@
+@model Team
+@{
+    ViewData["Title"] = "Create Team";
+}
+
+<section class="form-page form-page--create">
+    <div class="form-header">
+        <h1>Create New Team</h1>
+        <p class="section-copy">Register a new team in the tournament system.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Create" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" placeholder="Enter team name" />
+                <span asp-validation-for="Name" class="form-error"></span>
+            </div>
+
+            @{
+                ViewData["FieldId"] = "CoachId";
+                ViewData["FieldLabel"] = "Coach";
+                ViewData["SearchUrl"] = "/trener/autocomplete";
+                ViewData["InitialId"] = "";
+                ViewData["InitialLabel"] = "";
+            }
+            @await Html.PartialAsync("_AutocompleteDropdown")
+
+            @{
+                ViewData["FieldId"] = "ManagerId";
+                ViewData["FieldLabel"] = "Manager";
+                ViewData["SearchUrl"] = "/menadzer/autocomplete";
+                ViewData["InitialId"] = "";
+                ViewData["InitialLabel"] = "";
+            }
+            @await Html.PartialAsync("_AutocompleteDropdown")
+
+            <div class="form-group">
+                <label asp-for="RegisteredAt" class="form-label"></label>
+                <input asp-for="RegisteredAt" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="RegisteredAt" class="form-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Team</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/form-validation.js"></script>
+    <script src="~/js/date-time-picker.js"></script>
+}

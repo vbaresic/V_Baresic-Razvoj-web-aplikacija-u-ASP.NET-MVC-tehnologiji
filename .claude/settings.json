@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": [
+      "Bash(*)",
+      "PowerShell(*)",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch",
+      "TodoWrite",
+      "Agent"
+    ],
+    "deny": [
+      "Bash(git commit*)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -ExecutionPolicy Bypass -Command \"$json = $input | ConvertFrom-Json; Add-Content -Path 'C:\\Users\\Viktor\\Desktop\\agent_log.txt' -Value ('[MAIN-AGENT START] ' + $json.prompt)\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -ExecutionPolicy Bypass -Command \"$json = $input | ConvertFrom-Json; Add-Content -Path 'C:\\Users\\Viktor\\Desktop\\agent_log.txt' -Value ('[UX-SUB-AGENT INVOKED] ' + $json.tool_name)\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -ExecutionPolicy Bypass -Command \"$json = $input | ConvertFrom-Json; Add-Content -Path 'C:\\Users\\Viktor\\Desktop\\agent_log.txt' -Value ('[UX-SUB-AGENT DONE] ' + $json.tool_name)\""
+          }
+        ]
+      }
+    ]
+  }
+}

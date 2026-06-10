@@ -6,14 +6,39 @@ namespace League_of_Legends_Tournament_Hosting.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Venue name is required")]
+        [StringLength(150, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 150 characters")]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "Address is required")]
+        [StringLength(200, MinimumLength = 5, ErrorMessage = "Address must be between 5 and 200 characters")]
         public string Address { get; set; }
+
+        [Required(ErrorMessage = "City is required")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "City must be between 2 and 100 characters")]
         public string City { get; set; }
+
+        [Required(ErrorMessage = "Capacity is required")]
+        [Range(1, 1000000, ErrorMessage = "Capacity must be at least 1")]
         public int Capacity { get; set; }
+
         public bool IsAvailable { get; set; }
+
+        [Required(ErrorMessage = "Booking from date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime BookingFrom { get; set; }
+
+        [Required(ErrorMessage = "Booking to date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime BookingTo { get; set; }
+
+        [Required(ErrorMessage = "Contact email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string ContactEmail { get; set; }
+
+        [Required(ErrorMessage = "Contact phone is required")]
+        [Phone(ErrorMessage = "Invalid phone number")]
         public string ContactPhone { get; set; }
 
         // EF Core required parameterless constructor

@@ -1,0 +1,128 @@
+@* Parameters (passed via ViewData or model):
+   - FieldId:       id/name for the hidden input that holds the selected ID
+   - FieldLabel:    display label shown above the control
+   - SearchUrl:     URL for the AJAX autocomplete endpoint (returns [{id, label}])
+   - InitialId:     (optional) pre-selected ID for Edit forms
+   - InitialLabel:  (optional) pre-selected display text for Edit forms
+   - IsRequired:    (optional) whether field is required, defaults to true
+*@
+@{
+    var fieldId      = (string)ViewData["FieldId"]!;
+    var fieldLabel   = (string)ViewData["FieldLabel"]!;
+    var searchUrl    = (string)ViewData["SearchUrl"]!;
+    var initialId    = ViewData["InitialId"]?.ToString() ?? "";
+    var initialLabel = ViewData["InitialLabel"]?.ToString() ?? "";
+    var isRequired   = ViewData["IsRequired"] as bool? ?? true;
+    var inputId      = fieldId + "_display";
+    var dropId       = fieldId + "_drop";
+}
+
+<div class="form-group autocomplete-group" data-autocomplete="true">
+    <label class="form-label" for="@inputId">@fieldLabel@(isRequired ? " *" : "")</label>
+    <div class="autocomplete-wrapper" id="@dropId">
+        <input type="text"
+               id="@inputId"
+               class="form-control form-input autocomplete-input"
+               placeholder="Type to search…"
+               autocomplete="off"
+               value="@initialLabel" />
+        <div class="autocomplete-list" role="listbox" aria-label="@fieldLabel suggestions" style="display:none;"></div>
+    </div>
+    <input type="hidden" id="@fieldId" name="@fieldId" value="@initialId" />
+    <span class="form-error autocomplete-error" data-for="@fieldId"></span>
+</div>
+
+<script>
+(function () {
+    const input   = document.getElementById('@inputId');
+    const hidden  = document.getElementById('@fieldId');
+    const list    = document.querySelector('#@dropId .autocomplete-list');
+    let debounce  = null;
+    let abortCtrl = null;
+
+    input.addEventListener('input', function () {
+        hidden.value = '';
+        clearTimeout(debounce);
+        const q = this.value.trim();
+        if (q.length < 1) { closeList(); return; }
+        debounce = setTimeout(() => fetchResults(q), 280);
+    });
+
+    input.addEventListener('blur', function () {
+        setTimeout(closeList, 180);
+        validateField();
+    });
+
+    input.addEventListener('keydown', function (e) {
+        const items = list.querySelectorAll('.autocomplete-item');
+        let active = list.querySelector('.autocomplete-item--active');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!active) items[0]?.classList.add('autocomplete-item--active');
+            else { active.classList.remove('autocomplete-item--active'); (active.nextElementSibling || items[0]).classList.add('autocomplete-item--active'); }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (!active) items[items.length - 1]?.classList.add('autocomplete-item--active');
+            else { active.classList.remove('autocomplete-item--active'); (active.previousElementSibling || items[items.length - 1]).classList.add('autocomplete-item--active'); }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (active) selectItem(active.dataset.id, active.dataset.label);
+        } else if (e.key === 'Escape') {
+            closeList();
+        }
+    });
+
+    async function fetchResults(q) {
+        if (abortCtrl) abortCtrl.abort();
+        abortCtrl = new AbortController();
+        try {
+            const res  = await fetch(`@searchUrl?query=${encodeURIComponent(q)}`, { signal: abortCtrl.signal });
+            const data = await res.json();
+            renderList(data);
+        } catch (ex) {
+            if (ex.name !== 'AbortError') closeList();
+        }
+    }
+
+    function renderList(items) {
+        list.innerHTML = '';
+        if (!items.length) { closeList(); return; }
+        items.forEach(item => {
+            const li = document.createElement('div');
+            li.className = 'autocomplete-item';
+            li.textContent = item.label;
+            li.dataset.id = item.id;
+            li.dataset.label = item.label;
+            li.addEventListener('mousedown', () => selectItem(item.id, item.label));
+            list.appendChild(li);
+        });
+        list.style.display = 'block';
+    }
+
+    function selectItem(id, label) {
+        hidden.value = id;
+        input.value  = label;
+        closeList();
+        clearError();
+    }
+
+    function closeList() { list.style.display = 'none'; list.innerHTML = ''; }
+
+    function validateField() {
+        const err = document.querySelector('.autocomplete-error[data-for="@fieldId"]');
+        if (!err) return;
+        if (@(isRequired ? "true" : "false") && !hidden.value) {
+            err.textContent = '@fieldLabel is required.';
+            input.classList.add('input-error');
+        } else {
+            clearError();
+        }
+    }
+
+    function clearError() {
+        const err = document.querySelector('.autocomplete-error[data-for="@fieldId"]');
+        if (err) err.textContent = '';
+        input.classList.remove('input-error');
+    }
+})();
+</script>

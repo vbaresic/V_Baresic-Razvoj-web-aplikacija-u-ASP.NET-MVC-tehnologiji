@@ -1,0 +1,79 @@
+@model Team
+@{
+    ViewData["Title"] = $"Edit {Model.Name}";
+}
+
+<section class="form-page form-page--edit">
+    <div class="form-header">
+        <h1>Edit Team</h1>
+        <p class="section-copy">Update team information and roster status.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Edit" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" />
+                <span asp-validation-for="Name" class="form-error"></span>
+            </div>
+
+            @{
+                var coachLabel = Model.Coach != null
+                    ? (string.IsNullOrEmpty(Model.Coach.GamerTag)
+                        ? Model.Coach.Name
+                        : $"{Model.Coach.Name} ({Model.Coach.GamerTag})")
+                    : "";
+
+                ViewData["FieldId"] = "CoachId";
+                ViewData["FieldLabel"] = "Coach";
+                ViewData["SearchUrl"] = "/trener/autocomplete";
+                ViewData["InitialId"] = Model.CoachId.ToString();
+                ViewData["InitialLabel"] = coachLabel;
+            }
+            @await Html.PartialAsync("_AutocompleteDropdown")
+
+            @{
+                var managerLabel = Model.Manager?.Name ?? "";
+
+                ViewData["FieldId"] = "ManagerId";
+                ViewData["FieldLabel"] = "Manager";
+                ViewData["SearchUrl"] = "/menadzer/autocomplete";
+                ViewData["InitialId"] = Model.ManagerId.ToString();
+                ViewData["InitialLabel"] = managerLabel;
+            }
+            @await Html.PartialAsync("_AutocompleteDropdown")
+
+            <div class="form-group">
+                <label asp-for="RegisteredAt" class="form-label"></label>
+                <input asp-for="RegisteredAt" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="RegisteredAt" class="form-error"></span>
+            </div>
+
+            <div class="form-group form-group--checkbox">
+                <label class="form-label checkbox-label">
+                    <input asp-for="IsRosterConfirmed" type="checkbox" class="form-checkbox" />
+                    <span>Roster Confirmed</span>
+                </label>
+                <span asp-validation-for="IsRosterConfirmed" class="form-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/form-validation.js"></script>
+    <script src="~/js/date-time-picker.js"></script>
+}

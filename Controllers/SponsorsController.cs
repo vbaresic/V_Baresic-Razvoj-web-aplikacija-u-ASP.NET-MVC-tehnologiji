@@ -1,12 +1,14 @@
 using League_of_Legends_Tournament_Hosting.Data;
 using League_of_Legends_Tournament_Hosting.Models;
 using League_of_Legends_Tournament_Hosting.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Controllers
 {
     [Route("sponzor")]
+    [Authorize]
     public class SponsorsController : AppControllerBase
     {
         private readonly TournamentDbContext _dbContext;
@@ -19,6 +21,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("")]
         [Route("pregled")]
         [Route("sve")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             SetBreadcrumbs(
@@ -69,6 +72,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("kreiraj")]
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
             SetBreadcrumbs(
@@ -82,6 +86,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("kreiraj")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create([Bind("Name,Website,ContactEmail,ContactPhone,SponsorshipAmount,ContractStart,ContractEnd")] Sponsor sponsor)
         {
             if (ModelState.IsValid)
@@ -95,6 +100,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("uredi/{id:int}")]
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id)
         {
             var sponsor = await _dbContext.Sponsors
@@ -117,6 +123,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("uredi/{id:int}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Website,ContactEmail,ContactPhone,SponsorshipAmount,ContractStart,ContractEnd")] Sponsor sponsor)
         {
             if (id != sponsor.Id)
@@ -146,6 +153,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("obrisi/{id:int}")]
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var sponsor = await _dbContext.Sponsors
@@ -168,6 +176,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("obrisi/{id:int}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var sponsor = await _dbContext.Sponsors.FindAsync(id);
@@ -181,6 +190,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("pretraga")]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Search(string query)
         {
             if (string.IsNullOrWhiteSpace(query))

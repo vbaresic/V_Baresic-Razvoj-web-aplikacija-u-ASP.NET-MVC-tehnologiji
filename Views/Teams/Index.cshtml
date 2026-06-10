@@ -11,11 +11,25 @@
             <p class="section-copy">@ViewData["EntityCount"] teams found. Compare roster depth, coaching structure, and readiness at a glance.</p>
         </div>
         <div class="section-heading__actions">
+            <a class="section-cta" asp-controller="Teams" asp-action="Create">+ Add Team</a>
             <a class="section-cta" asp-controller="Players" asp-action="Index">Scout players</a>
         </div>
     </div>
 
-    <div class="card-grid card-grid--spotlight card-grid--teams">
+    <div class="search-bar-container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search teams by name, coach or manager..." />
+            <button id="searchBtn" class="search-btn" aria-label="Search">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm8.5 10.5l2.5 2.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </button>
+            <button id="clearSearchBtn" class="clear-search-btn" style="display:none;" aria-label="Clear search">×</button>
+        </div>
+        <div id="searchMessage" class="search-message"></div>
+    </div>
+
+    <div class="card-grid card-grid--spotlight card-grid--teams" id="resultGrid">
         @foreach (var card in Model)
         {
             var teamStatusClass = card.Body.Contains("Roster confirmed", StringComparison.OrdinalIgnoreCase) ? "people-card--confirmed" : "people-card--open";
@@ -49,3 +63,51 @@
         }
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/js/ajax-search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchConfig = {
+                searchUrl: '@Url.Action("Search", "Teams")',
+                resultGrid: '#resultGrid',
+                searchInput: '#searchInput',
+                searchBtn: '#searchBtn',
+                clearBtn: '#clearSearchBtn',
+                searchMessage: '#searchMessage',
+                cardTemplate: function (card, index) {
+                    const statusClass = card.body.toLowerCase().includes('roster confirmed') ? 'people-card--confirmed' : 'people-card--open';
+                    return `
+                        <article class="spotlight-card people-card people-card--team ${statusClass}">
+                            <a class="people-card__hit-area" href="${card.linkUrl}" aria-label="Open ${card.title} details"></a>
+                            <div class="spotlight-card__glow"></div>
+                            <div class="spotlight-card__ribbon">Team roster</div>
+                            <div class="spotlight-card__header">
+                                <div class="spotlight-card__badge spotlight-card__badge--blue">
+                                    <span class="spotlight-card__badge-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24"><path d="M5 20a7 7 0 0 1 14 0zm7-8a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" fill="currentColor"/></svg>
+                                    </span>
+                                    <span>${card.subtitle}</span>
+                                </div>
+                                <div class="spotlight-card__metric">
+                                    <span>${card.body.split('·')[0].trim()}</span>
+                                    <small>Roster</small>
+                                </div>
+                            </div>
+                            <div class="spotlight-card__body">
+                                <h3>${card.title}</h3>
+                                <div class="people-card__title-spacer" aria-hidden="true"></div>
+                                <p>${card.body}</p>
+                            </div>
+                            <div class="people-card__role-band" aria-label="Team status">
+                                <span class="people-card__role-label">Status</span>
+                                <strong>${card.body.split('·').pop().trim()}</strong>
+                            </div>
+                        </article>
+                    `;
+                }
+            };
+            initializeAjaxSearch(searchConfig);
+        });
+    </script>
+}

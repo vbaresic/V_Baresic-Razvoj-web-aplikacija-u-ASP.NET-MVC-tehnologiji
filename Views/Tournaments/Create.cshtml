@@ -1,0 +1,98 @@
+@model Tournament
+@using League_of_Legends_Tournament_Hosting.Models
+@{
+    ViewData["Title"] = "Create Tournament";
+}
+
+<section class="form-page form-page--create">
+    <div class="form-header">
+        <h1>Create New Tournament</h1>
+        <p class="section-copy">Set up a new League of Legends tournament event.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Create" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" placeholder="Enter tournament name" />
+                <span asp-validation-for="Name" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control form-input" rows="4" placeholder="Enter tournament description"></textarea>
+                <span asp-validation-for="Description" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Type" class="form-label"></label>
+                <select asp-for="Type" class="form-control form-input">
+                    @foreach (var t in (TournamentType[])ViewBag.TournamentTypes)
+                    {
+                        <option value="@t">@t</option>
+                    }
+                </select>
+                <span asp-validation-for="Type" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Format" class="form-label"></label>
+                <select asp-for="Format" class="form-control form-input">
+                    @foreach (var f in (TournamentFormat[])ViewBag.TournamentFormats)
+                    {
+                        <option value="@f">@f</option>
+                    }
+                </select>
+                <span asp-validation-for="Format" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PrizePool" class="form-label"></label>
+                <input asp-for="PrizePool" type="number" step="0.01" min="0" max="10000000" class="form-control form-input" placeholder="0.00" />
+                <span asp-validation-for="PrizePool" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StartDate" class="form-label"></label>
+                <input asp-for="StartDate" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="StartDate" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EndDate" class="form-label"></label>
+                <input asp-for="EndDate" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="EndDate" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="RegistrationDeadline" class="form-label"></label>
+                <input asp-for="RegistrationDeadline" type="datetime-local" class="form-control form-input date-time-input" />
+                <span asp-validation-for="RegistrationDeadline" class="form-error"></span>
+            </div>
+
+            @{
+                ViewData["FieldId"] = "VenueId";
+                ViewData["FieldLabel"] = "Venue";
+                ViewData["SearchUrl"] = "/mjesto/autocomplete";
+                ViewData["InitialId"] = "";
+                ViewData["InitialLabel"] = "";
+            }
+            @await Html.PartialAsync("_AutocompleteDropdown")
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Tournament</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/form-validation.js"></script>
+    <script src="~/js/date-time-picker.js"></script>
+}

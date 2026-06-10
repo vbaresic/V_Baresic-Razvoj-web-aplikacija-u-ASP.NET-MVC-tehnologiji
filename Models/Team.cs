@@ -10,10 +10,16 @@ namespace League_of_Legends_Tournament_Hosting.Models
 
         [Key]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Team name is required")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Team name must be between 2 and 100 characters")]
         public string Name { get; set; }
 
         // Foreign Keys
+        [Required(ErrorMessage = "Coach is required")]
         public int CoachId { get; set; }
+
+        [Required(ErrorMessage = "Manager is required")]
         public int ManagerId { get; set; }
 
         // Navigation Properties
@@ -23,6 +29,8 @@ namespace League_of_Legends_Tournament_Hosting.Models
         [ForeignKey("ManagerId")]
         public virtual Manager Manager { get; set; }
 
+        [Required(ErrorMessage = "Registration date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime RegisteredAt { get; set; }
 
         // EF Core collection for many-to-many relationship

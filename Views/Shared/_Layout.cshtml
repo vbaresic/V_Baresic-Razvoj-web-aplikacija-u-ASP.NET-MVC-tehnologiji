@@ -30,10 +30,12 @@
                         <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5s-5 2.24-5 5v2H6c-1.1 0-2 .9-2 2v10h16V10c0-1.1-.9-2-2-2zm-6-2c1.66 0 3 1.34 3 3v2h-6V6c0-1.66 1.34-3 3-3zm6 12H6v-8h12v8zm-1-9h-2v2h2v-2zm-4 0H8v2h2v-2z" fill="currentColor"/></svg>
                         <span class="topbar-notif-badge">3</span>
                     </button>
-                    
+
                     <button class="topbar-btn" type="button" aria-label="Profile" title="Profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
                     </button>
+
+                    @await Html.PartialAsync("_LoginPartial")
                 </div>
 
                 <div class="topbar-breadcrumb">

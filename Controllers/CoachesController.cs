@@ -1,12 +1,14 @@
 using League_of_Legends_Tournament_Hosting.Data;
 using League_of_Legends_Tournament_Hosting.Models;
 using League_of_Legends_Tournament_Hosting.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace League_of_Legends_Tournament_Hosting.Controllers
 {
     [Route("trener")]
+    [Authorize]
     public class CoachesController : AppControllerBase
     {
         private readonly TournamentDbContext _dbContext;
@@ -19,6 +21,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("")]
         [Route("pregled")]
         [Route("sve")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             SetBreadcrumbs(
@@ -69,6 +72,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("kreiraj")]
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
             SetBreadcrumbs(
@@ -82,6 +86,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("kreiraj")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create([Bind("Name,GamerTag,HiredAt,YearsOfExperience")] Coach coach)
         {
             if (ModelState.IsValid)
@@ -95,6 +100,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("uredi/{id:int}")]
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id)
         {
             var coach = await _dbContext.Coaches
@@ -117,6 +123,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("uredi/{id:int}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,GamerTag,HiredAt,YearsOfExperience")] Coach coach)
         {
             if (id != coach.Id)
@@ -146,6 +153,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("obrisi/{id:int}")]
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var coach = await _dbContext.Coaches
@@ -168,6 +176,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
         [Route("obrisi/{id:int}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var coach = await _dbContext.Coaches.FindAsync(id);
@@ -181,6 +190,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
 
         [Route("pretraga")]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Search(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
@@ -201,6 +211,25 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
                 .ToListAsync();
 
             return Json(searchResults);
+        }
+
+        [Route("autocomplete")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Autocomplete(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return Json(Array.Empty<object>());
+
+            var results = await _dbContext.Coaches
+                .AsNoTracking()
+                .Where(c => c.Name.Contains(query) || c.GamerTag.Contains(query))
+                .OrderBy(c => c.Name)
+                .Take(10)
+                .Select(c => new { id = c.Id, label = $"{c.Name} ({c.GamerTag})" })
+                .ToListAsync();
+
+            return Json(results);
         }
 
         private bool CoachExists(int id)

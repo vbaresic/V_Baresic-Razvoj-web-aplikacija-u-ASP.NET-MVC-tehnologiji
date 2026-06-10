@@ -6,8 +6,17 @@ namespace League_of_Legends_Tournament_Hosting.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Manager name is required")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters")]
+        public string Name { get; set; } = null!;
+
+        [Required(ErrorMessage = "Hire date is required")]
+        [DataType(DataType.DateTime)]
         public DateTime HiredAt { get; set; }
+
+        [Required(ErrorMessage = "Years of experience is required")]
+        [Range(0, 100, ErrorMessage = "Years of experience must be between 0 and 100")]
         public int YearsOfExperience { get; set; }
 
         // EF Core required parameterless constructor

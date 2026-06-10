@@ -1,0 +1,71 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Prijava";
+}
+
+<section class="form-page form-page--create">
+    <div class="form-header">
+        <h1>Prijava</h1>
+        <p class="section-copy">Prijavite se u svoj račun kako biste pristupili turnirima i timovima.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form id="account" method="post" asp-route-returnUrl="@Model.ReturnUrl" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="form-group">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control form-input" autocomplete="username" placeholder="ime@primjer.com" />
+                <span asp-validation-for="Input.Email" class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control form-input" autocomplete="current-password" placeholder="Unesite lozinku" />
+                <span asp-validation-for="Input.Password" class="form-error"></span>
+            </div>
+
+            <div class="form-group form-group--checkbox">
+                <label class="form-checkbox-label">
+                    <input class="form-checkbox" asp-for="Input.RememberMe" />
+                    <span asp-for="Input.RememberMe">@Html.DisplayNameFor(m => m.Input.RememberMe)</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Prijavi se</button>
+            </div>
+        </form>
+
+        @if (Model.ExternalLogins.Any())
+        {
+            <div class="form-divider" role="separator" aria-label="ili">
+                <span>ili</span>
+            </div>
+
+            <section class="external-logins" aria-label="Vanjske prijave">
+                <h2 class="external-logins-title">Ili se prijavi pomoću:</h2>
+                @foreach (var provider in Model.ExternalLogins)
+                {
+                    <form asp-area="Identity" asp-page="./ExternalLogin" asp-page-handler="OnPost" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="external-login-form">
+                        <button type="submit" class="btn btn-secondary external-login-btn" name="provider" value="@provider.Name" title="Prijava putem @provider.DisplayName-a">
+                            Prijava putem @provider.DisplayName-a
+                        </button>
+                    </form>
+                }
+            </section>
+        }
+
+        <p class="form-footnote">
+            Nemaš račun? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registriraj se</a>
+        </p>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("~/Views/Shared/_ValidationScriptsPartial.cshtml");
+    }
+    <script src="~/js/form-validation.js"></script>
+}
