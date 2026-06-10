@@ -48,11 +48,11 @@
             }
             @await Html.PartialAsync("_AutocompleteDropdown")
 
-            <div class="form-group">
-                <label asp-for="RegisteredAt" class="form-label"></label>
-                <input asp-for="RegisteredAt" type="datetime-local" class="form-control form-input date-time-input" />
-                <span asp-validation-for="RegisteredAt" class="form-error"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.RegisteredAt, new ViewDataDictionary(ViewData) {
+                { "FieldName", "RegisteredAt" },
+                { "Label", Html.DisplayNameFor(m => m.RegisteredAt) },
+                { "Required", false }
+            })
 
             <div class="form-group form-group--checkbox">
                 <label class="form-label checkbox-label">

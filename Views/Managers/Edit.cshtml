@@ -21,11 +21,11 @@
                 <span asp-validation-for="Name" class="form-error"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="HiredAt" class="form-label"></label>
-                <input asp-for="HiredAt" type="datetime-local" class="form-control form-input date-time-input" required />
-                <span asp-validation-for="HiredAt" class="form-error"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.HiredAt, new ViewDataDictionary(ViewData) {
+                { "FieldName", "HiredAt" },
+                { "Label", Html.DisplayNameFor(m => m.HiredAt) },
+                { "Required", true }
+            })
 
             <div class="form-group">
                 <label asp-for="YearsOfExperience" class="form-label"></label>

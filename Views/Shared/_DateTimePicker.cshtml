@@ -1,0 +1,15 @@
+@model DateTime?
+@{
+    var fieldName = ViewData["FieldName"] as string ?? "";
+    var label = ViewData["Label"] as string ?? fieldName;
+    var required = ViewData["Required"] as bool? ?? false;
+    var value = Model.HasValue ? Model.Value.ToString("yyyy-MM-ddTHH:mm") : "";
+}
+<div class="form-group">
+    <label for="@fieldName" class="form-label">@label</label>
+    <input type="text" id="@fieldName" name="@fieldName" value="@value"
+           class="form-control form-input date-time-input"
+           autocomplete="off"
+           @(required ? "required" : "") />
+    <span class="form-error" data-valmsg-for="@fieldName" data-valmsg-replace="true"></span>
+</div>

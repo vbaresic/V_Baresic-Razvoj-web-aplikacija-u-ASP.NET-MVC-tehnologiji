@@ -68,5 +68,19 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             var response = await _client.GetAsync("/api/managers/999999");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task CreateManager_InvalidData_ReturnsBadRequest()
+        {
+            var invalidRequest = new ManagerRequest
+            {
+                Name = "A", // too short
+                HiredAt = new DateTime(2023, 5, 1),
+                YearsOfExperience = -1 // out of range
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/managers", invalidRequest);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }

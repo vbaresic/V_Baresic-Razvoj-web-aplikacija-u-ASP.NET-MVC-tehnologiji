@@ -33,11 +33,11 @@
                 @Html.DropDownListFor(m => m.SecondaryPosition, Html.GetEnumSelectList<Position>(), "Select Position", new { @class = "form-control" })
                 <span asp-validation-for="SecondaryPosition" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="JoinedAt" class="control-label"></label>
-                <input asp-for="JoinedAt" class="form-control" type="date" />
-                <span asp-validation-for="JoinedAt" class="text-danger"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.JoinedAt, new ViewDataDictionary(ViewData) {
+                { "FieldName", "JoinedAt" },
+                { "Label", Html.DisplayNameFor(m => m.JoinedAt) },
+                { "Required", false }
+            })
             <div class="form-group">
                 <label asp-for="AccountInformation.SummonerName" class="control-label"></label>
                 <input asp-for="AccountInformation.SummonerName" class="form-control" />
@@ -65,3 +65,10 @@
         </form>
     </div>
 </section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/date-time-picker.js"></script>
+}

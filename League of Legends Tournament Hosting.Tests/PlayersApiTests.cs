@@ -86,5 +86,26 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             var response = await _client.GetAsync("/api/players/999999");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task CreatePlayer_InvalidData_ReturnsBadRequest()
+        {
+            var invalidRequest = new PlayerRequest
+            {
+                Name = "A", // too short
+                GamerTag = "AB", // too short
+                Role = PlayerRole.Player,
+                PreferredPosition = Position.MidLane,
+                SecondaryPosition = Position.TopLane,
+                JoinedAt = new DateTime(2025, 1, 1),
+                SummonerName = "", // required
+                RiotTag = "EUW1",
+                Region = Region.EUW,
+                LeagueTier = LeagueTier.Gold
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/players", invalidRequest);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }

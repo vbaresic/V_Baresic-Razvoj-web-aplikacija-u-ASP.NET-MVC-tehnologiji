@@ -76,5 +76,23 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             var response = await _client.GetAsync("/api/sponsors/999999");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task CreateSponsor_InvalidData_ReturnsBadRequest()
+        {
+            var invalidRequest = new SponsorRequest
+            {
+                Name = "A", // too short
+                Website = "not-a-url", // invalid URL
+                ContactEmail = "not-an-email", // invalid email
+                ContactPhone = "+385987654321",
+                SponsorshipAmount = -100m, // out of range
+                ContractStart = new DateTime(2026, 1, 1),
+                ContractEnd = new DateTime(2026, 12, 31)
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/sponsors", invalidRequest);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }

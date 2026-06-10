@@ -80,5 +80,25 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             var response = await _client.GetAsync("/api/venues/999999");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task CreateVenue_InvalidData_ReturnsBadRequest()
+        {
+            var invalidRequest = new VenueRequest
+            {
+                Name = "A", // too short
+                Address = "B", // too short
+                City = "Zagreb",
+                Capacity = 0, // out of range
+                IsAvailable = true,
+                BookingFrom = new DateTime(2026, 1, 1),
+                BookingTo = new DateTime(2026, 12, 31),
+                ContactEmail = "not-an-email", // invalid email
+                ContactPhone = "+385123456789"
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/venues", invalidRequest);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }

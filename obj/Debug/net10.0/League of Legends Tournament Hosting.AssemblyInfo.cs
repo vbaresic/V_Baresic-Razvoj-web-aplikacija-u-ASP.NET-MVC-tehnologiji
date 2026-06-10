@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("League of Legends Tournament Hosting")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3957b92403c773ec279f3a3296df144de896fd07")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b10fdeb19a350ff38923a7219c2e1caa14aaf5e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("League of Legends Tournament Hosting")]
 [assembly: System.Reflection.AssemblyTitleAttribute("League of Legends Tournament Hosting")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

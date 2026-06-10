@@ -67,23 +67,23 @@
                 <span asp-validation-for="PrizePool" class="form-error"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="StartDate" class="form-label"></label>
-                <input asp-for="StartDate" type="datetime-local" class="form-control form-input date-time-input" />
-                <span asp-validation-for="StartDate" class="form-error"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.StartDate, new ViewDataDictionary(ViewData) {
+                { "FieldName", "StartDate" },
+                { "Label", Html.DisplayNameFor(m => m.StartDate) },
+                { "Required", false }
+            })
 
-            <div class="form-group">
-                <label asp-for="EndDate" class="form-label"></label>
-                <input asp-for="EndDate" type="datetime-local" class="form-control form-input date-time-input" />
-                <span asp-validation-for="EndDate" class="form-error"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.EndDate, new ViewDataDictionary(ViewData) {
+                { "FieldName", "EndDate" },
+                { "Label", Html.DisplayNameFor(m => m.EndDate) },
+                { "Required", false }
+            })
 
-            <div class="form-group">
-                <label asp-for="RegistrationDeadline" class="form-label"></label>
-                <input asp-for="RegistrationDeadline" type="datetime-local" class="form-control form-input date-time-input" />
-                <span asp-validation-for="RegistrationDeadline" class="form-error"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.RegistrationDeadline, new ViewDataDictionary(ViewData) {
+                { "FieldName", "RegistrationDeadline" },
+                { "Label", Html.DisplayNameFor(m => m.RegistrationDeadline) },
+                { "Required", false }
+            })
 
             @{
                 ViewData["FieldId"] = "VenueId";

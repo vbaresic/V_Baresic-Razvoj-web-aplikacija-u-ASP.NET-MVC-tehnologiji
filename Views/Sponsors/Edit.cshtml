@@ -45,17 +45,17 @@
                 <span asp-validation-for="SponsorshipAmount" class="form-error"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="ContractStart" class="form-label"></label>
-                <input asp-for="ContractStart" type="datetime-local" class="form-control form-input date-time-input" required />
-                <span asp-validation-for="ContractStart" class="form-error"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.ContractStart, new ViewDataDictionary(ViewData) {
+                { "FieldName", "ContractStart" },
+                { "Label", Html.DisplayNameFor(m => m.ContractStart) },
+                { "Required", true }
+            })
 
-            <div class="form-group">
-                <label asp-for="ContractEnd" class="form-label"></label>
-                <input asp-for="ContractEnd" type="datetime-local" class="form-control form-input date-time-input" required />
-                <span asp-validation-for="ContractEnd" class="form-error"></span>
-            </div>
+            @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.ContractEnd, new ViewDataDictionary(ViewData) {
+                { "FieldName", "ContractEnd" },
+                { "Label", Html.DisplayNameFor(m => m.ContractEnd) },
+                { "Required", true }
+            })
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
