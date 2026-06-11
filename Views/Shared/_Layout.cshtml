@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="topbar-breadcrumb">
-                    @await Html.PartialAsync("Components/_Breadcrumb", ViewData["Breadcrumbs"] as IEnumerable<BreadcrumbItem>)
+                    @await Html.PartialAsync("Components/_Breadcrumb", ViewData["Breadcrumbs"] as IEnumerable<BreadcrumbItem> ?? Array.Empty<BreadcrumbItem>())
                 </div>
 
                 <div class="topbar-socials" aria-label="Social media quick links">
