@@ -57,6 +57,11 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             Assert.True(created!.Id > 0);
             Assert.Equal(coachId, created.CoachId);
             Assert.Equal(managerId, created.ManagerId);
+            Assert.NotNull(created.Coach);
+            Assert.Equal(coachId, created.Coach!.Id);
+            Assert.NotNull(created.Manager);
+            Assert.Equal(managerId, created.Manager!.Id);
+            Assert.Empty(created.Players);
 
             // Get by id
             var fetched = await _client.GetFromJsonAsync<TeamDto>($"/api/teams/{created.Id}");

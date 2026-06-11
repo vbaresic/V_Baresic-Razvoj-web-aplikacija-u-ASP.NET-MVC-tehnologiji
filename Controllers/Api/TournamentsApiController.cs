@@ -20,14 +20,20 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
             _context = context;
         }
 
-        // GET: api/tournaments?search=...
+        // GET: api/tournaments?search=...&sortBy=name&descending=false&page=1&pageSize=20
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<TournamentDto>>> GetTournaments([FromQuery] string? search)
+        public async Task<ActionResult<IEnumerable<TournamentDto>>> GetTournaments(
+            [FromQuery] string? search,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool descending = false,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
         {
             var query = _context.Tournaments
                 .Include(t => t.Venue)
                 .Include(t => t.TeamsList)
+                .Include(t => t.SponsorsList)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -35,7 +41,16 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
                 query = query.Where(t => t.Name.Contains(search));
             }
 
-            var tournaments = await query.ToListAsync();
+            query = sortBy?.ToLowerInvariant() switch
+            {
+                "startdate" => descending ? query.OrderByDescending(t => t.StartDate) : query.OrderBy(t => t.StartDate),
+                "prizepool" => descending ? query.OrderByDescending(t => t.PrizePool) : query.OrderBy(t => t.PrizePool),
+                "status" => descending ? query.OrderByDescending(t => t.Status) : query.OrderBy(t => t.Status),
+                "name" => descending ? query.OrderByDescending(t => t.Name) : query.OrderBy(t => t.Name),
+                _ => descending ? query.OrderByDescending(t => t.Id) : query.OrderBy(t => t.Id)
+            };
+
+            var tournaments = await query.ApplyPaging(page, pageSize).ToListAsync();
             return Ok(tournaments.Select(ToDto));
         }
 
@@ -47,6 +62,7 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
             var tournament = await _context.Tournaments
                 .Include(t => t.Venue)
                 .Include(t => t.TeamsList)
+                .Include(t => t.SponsorsList)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (tournament == null)
@@ -259,7 +275,24 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
                 RegistrationDeadline = tournament.RegistrationDeadline,
                 VenueId = tournament.VenueId,
                 VenueName = tournament.Venue?.Name ?? string.Empty,
-                TeamCount = tournament.TeamsList?.Count ?? 0
+                TeamCount = tournament.TeamsList?.Count ?? 0,
+                Venue = tournament.Venue == null ? null : new VenueSummaryDto
+                {
+                    Id = tournament.Venue.Id,
+                    Name = tournament.Venue.Name,
+                    City = tournament.Venue.City
+                },
+                Teams = (tournament.TeamsList ?? new List<Team>()).Select(t => new TeamSummaryDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    IsRosterConfirmed = t.IsRosterConfirmed
+                }).ToList(),
+                Sponsors = (tournament.SponsorsList ?? new List<Sponsor>()).Select(s => new SponsorSummaryDto
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList()
             };
         }
     }

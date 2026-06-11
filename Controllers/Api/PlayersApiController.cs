@@ -19,10 +19,15 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
             _context = context;
         }
 
-        // GET: api/players?search=...
+        // GET: api/players?search=...&sortBy=name&descending=false&page=1&pageSize=20
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayers([FromQuery] string? search)
+        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayers(
+            [FromQuery] string? search,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool descending = false,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
         {
             var query = _context.Players.AsQueryable();
 
@@ -31,7 +36,15 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
                 query = query.Where(p => p.Name.Contains(search) || p.GamerTag.Contains(search));
             }
 
-            var players = await query.ToListAsync();
+            query = sortBy?.ToLowerInvariant() switch
+            {
+                "gamertag" => descending ? query.OrderByDescending(p => p.GamerTag) : query.OrderBy(p => p.GamerTag),
+                "joinedat" => descending ? query.OrderByDescending(p => p.JoinedAt) : query.OrderBy(p => p.JoinedAt),
+                "name" => descending ? query.OrderByDescending(p => p.Name) : query.OrderBy(p => p.Name),
+                _ => descending ? query.OrderByDescending(p => p.Id) : query.OrderBy(p => p.Id)
+            };
+
+            var players = await query.ApplyPaging(page, pageSize).ToListAsync();
             return Ok(players.Select(ToDto));
         }
 

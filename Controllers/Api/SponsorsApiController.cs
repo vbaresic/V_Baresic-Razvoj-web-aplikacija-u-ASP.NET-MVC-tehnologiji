@@ -19,10 +19,15 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
             _context = context;
         }
 
-        // GET: api/sponsors?search=...
+        // GET: api/sponsors?search=...&sortBy=name&descending=false&page=1&pageSize=20
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<SponsorDto>>> GetSponsors([FromQuery] string? search)
+        public async Task<ActionResult<IEnumerable<SponsorDto>>> GetSponsors(
+            [FromQuery] string? search,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool descending = false,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
         {
             var query = _context.Sponsors.AsQueryable();
 
@@ -31,7 +36,16 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
                 query = query.Where(s => s.Name.Contains(search));
             }
 
-            var sponsors = await query.ToListAsync();
+            query = sortBy?.ToLowerInvariant() switch
+            {
+                "sponsorshipamount" => descending ? query.OrderByDescending(s => s.SponsorshipAmount) : query.OrderBy(s => s.SponsorshipAmount),
+                "contractstart" => descending ? query.OrderByDescending(s => s.ContractStart) : query.OrderBy(s => s.ContractStart),
+                "contractend" => descending ? query.OrderByDescending(s => s.ContractEnd) : query.OrderBy(s => s.ContractEnd),
+                "name" => descending ? query.OrderByDescending(s => s.Name) : query.OrderBy(s => s.Name),
+                _ => descending ? query.OrderByDescending(s => s.Id) : query.OrderBy(s => s.Id)
+            };
+
+            var sponsors = await query.ApplyPaging(page, pageSize).ToListAsync();
             return Ok(sponsors.Select(ToDto));
         }
 

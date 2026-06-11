@@ -19,10 +19,15 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
             _context = context;
         }
 
-        // GET: api/venues?search=...
+        // GET: api/venues?search=...&sortBy=name&descending=false&page=1&pageSize=20
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<VenueDto>>> GetVenues([FromQuery] string? search)
+        public async Task<ActionResult<IEnumerable<VenueDto>>> GetVenues(
+            [FromQuery] string? search,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool descending = false,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
         {
             var query = _context.Venues.AsQueryable();
 
@@ -31,7 +36,15 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
                 query = query.Where(v => v.Name.Contains(search) || v.City.Contains(search));
             }
 
-            var venues = await query.ToListAsync();
+            query = sortBy?.ToLowerInvariant() switch
+            {
+                "city" => descending ? query.OrderByDescending(v => v.City) : query.OrderBy(v => v.City),
+                "capacity" => descending ? query.OrderByDescending(v => v.Capacity) : query.OrderBy(v => v.Capacity),
+                "name" => descending ? query.OrderByDescending(v => v.Name) : query.OrderBy(v => v.Name),
+                _ => descending ? query.OrderByDescending(v => v.Id) : query.OrderBy(v => v.Id)
+            };
+
+            var venues = await query.ApplyPaging(page, pageSize).ToListAsync();
             return Ok(venues.Select(ToDto));
         }
 

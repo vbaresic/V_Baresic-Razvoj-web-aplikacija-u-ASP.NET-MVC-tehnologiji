@@ -101,6 +101,40 @@ namespace League_of_Legends_Tournament_Hosting.Tests
         }
 
         [Fact]
+        public async Task GetCoaches_PagingAndSorting_WorksCorrectly()
+        {
+            for (var i = 1; i <= 3; i++)
+            {
+                await _client.PostAsJsonAsync("/api/coaches", new CoachRequest
+                {
+                    Name = $"Paging Coach {i}",
+                    GamerTag = $"PagingTag{i}",
+                    HiredAt = new DateTime(2024, 1, 1),
+                    YearsOfExperience = i
+                });
+            }
+
+            var pageResponse = await _client.GetAsync("/api/coaches?search=Paging Coach&sortBy=name&page=1&pageSize=2");
+            Assert.Equal(HttpStatusCode.OK, pageResponse.StatusCode);
+            var page = await pageResponse.Content.ReadFromJsonAsync<List<CoachDto>>();
+            Assert.NotNull(page);
+            Assert.Equal(2, page!.Count);
+            Assert.Equal("Paging Coach 1", page[0].Name);
+            Assert.Equal("Paging Coach 2", page[1].Name);
+
+            var secondPageResponse = await _client.GetAsync("/api/coaches?search=Paging Coach&sortBy=name&page=2&pageSize=2");
+            var secondPage = await secondPageResponse.Content.ReadFromJsonAsync<List<CoachDto>>();
+            Assert.NotNull(secondPage);
+            Assert.Single(secondPage!);
+            Assert.Equal("Paging Coach 3", secondPage[0].Name);
+
+            var descendingResponse = await _client.GetAsync("/api/coaches?search=Paging Coach&sortBy=name&descending=true&page=1&pageSize=1");
+            var descendingPage = await descendingResponse.Content.ReadFromJsonAsync<List<CoachDto>>();
+            Assert.NotNull(descendingPage);
+            Assert.Equal("Paging Coach 3", descendingPage![0].Name);
+        }
+
+        [Fact]
         public async Task CreateCoach_InvalidData_ReturnsBadRequest()
         {
             var invalidRequest = new CoachRequest

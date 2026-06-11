@@ -18,6 +18,29 @@ namespace League_of_Legends_Tournament_Hosting.DTOs
         public int VenueId { get; set; }
         public string VenueName { get; set; } = string.Empty;
         public int TeamCount { get; set; }
+        public VenueSummaryDto? Venue { get; set; }
+        public List<TeamSummaryDto> Teams { get; set; } = new();
+        public List<SponsorSummaryDto> Sponsors { get; set; } = new();
+    }
+
+    public class VenueSummaryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+    }
+
+    public class TeamSummaryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public bool IsRosterConfirmed { get; set; }
+    }
+
+    public class SponsorSummaryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public class TournamentRequest

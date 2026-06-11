@@ -19,10 +19,15 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
             _context = context;
         }
 
-        // GET: api/teams?search=...
+        // GET: api/teams?search=...&sortBy=name&descending=false&page=1&pageSize=20
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<TeamDto>>> GetTeams([FromQuery] string? search)
+        public async Task<ActionResult<IEnumerable<TeamDto>>> GetTeams(
+            [FromQuery] string? search,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool descending = false,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
         {
             var query = _context.Teams
                 .Include(t => t.Coach)
@@ -35,7 +40,14 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
                 query = query.Where(t => t.Name.Contains(search));
             }
 
-            var teams = await query.ToListAsync();
+            query = sortBy?.ToLowerInvariant() switch
+            {
+                "registeredat" => descending ? query.OrderByDescending(t => t.RegisteredAt) : query.OrderBy(t => t.RegisteredAt),
+                "name" => descending ? query.OrderByDescending(t => t.Name) : query.OrderBy(t => t.Name),
+                _ => descending ? query.OrderByDescending(t => t.Id) : query.OrderBy(t => t.Id)
+            };
+
+            var teams = await query.ApplyPaging(page, pageSize).ToListAsync();
             return Ok(teams.Select(ToDto));
         }
 
@@ -140,7 +152,25 @@ namespace League_of_Legends_Tournament_Hosting.Controllers.Api
                 ManagerName = team.Manager?.Name ?? string.Empty,
                 RegisteredAt = team.RegisteredAt,
                 IsRosterConfirmed = team.IsRosterConfirmed,
-                PlayerCount = team.PlayersList?.Count ?? 0
+                PlayerCount = team.PlayersList?.Count ?? 0,
+                Coach = team.Coach == null ? null : new CoachSummaryDto
+                {
+                    Id = team.Coach.Id,
+                    Name = team.Coach.Name,
+                    GamerTag = team.Coach.GamerTag
+                },
+                Manager = team.Manager == null ? null : new ManagerSummaryDto
+                {
+                    Id = team.Manager.Id,
+                    Name = team.Manager.Name
+                },
+                Players = (team.PlayersList ?? new List<Player>()).Select(p => new PlayerSummaryDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    GamerTag = p.GamerTag,
+                    Role = p.Role.ToString()
+                }).ToList()
             };
         }
     }

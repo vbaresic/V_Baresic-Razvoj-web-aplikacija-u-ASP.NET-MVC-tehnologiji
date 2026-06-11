@@ -13,6 +13,30 @@ namespace League_of_Legends_Tournament_Hosting.DTOs
         public DateTime RegisteredAt { get; set; }
         public bool IsRosterConfirmed { get; set; }
         public int PlayerCount { get; set; }
+        public CoachSummaryDto? Coach { get; set; }
+        public ManagerSummaryDto? Manager { get; set; }
+        public List<PlayerSummaryDto> Players { get; set; } = new();
+    }
+
+    public class CoachSummaryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string GamerTag { get; set; } = string.Empty;
+    }
+
+    public class ManagerSummaryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+    }
+
+    public class PlayerSummaryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string GamerTag { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
     }
 
     public class TeamRequest

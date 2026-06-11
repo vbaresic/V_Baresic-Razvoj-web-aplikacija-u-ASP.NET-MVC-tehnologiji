@@ -60,6 +60,10 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             Assert.True(created!.Id > 0);
             Assert.Equal(venueId, created.VenueId);
             Assert.Equal("Preliminary", created.Type);
+            Assert.NotNull(created.Venue);
+            Assert.Equal(venueId, created.Venue!.Id);
+            Assert.Empty(created.Teams);
+            Assert.Empty(created.Sponsors);
 
             // Get by id
             var fetched = await _client.GetFromJsonAsync<TournamentDto>($"/api/tournaments/{created.Id}");
@@ -244,6 +248,27 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             content.Add(fileContent, "file", "test.txt");
 
             var response = await _client.PostAsync("/api/tournaments/999999/documents", content);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetDocuments_NonExistentTournament_ReturnsNotFound()
+        {
+            var response = await _client.GetAsync("/api/tournaments/999999/documents");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetDocument_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.GetAsync("/api/tournaments/documents/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteDocument_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/tournaments/documents/999999");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
