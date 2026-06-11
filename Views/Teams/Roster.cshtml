@@ -1,0 +1,103 @@
+@model League_of_Legends_Tournament_Hosting.ViewModels.TeamRosterViewModel
+@{
+    ViewData["Title"] = $"Roster — {Model.TeamName}";
+}
+
+<section class="detail-page detail-page--team roster-page">
+    <article class="content-card detail-hero detail-hero--green">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Roster management</p>
+        <h1>@Model.TeamName</h1>
+        <p class="detail-hero__subtitle">
+            Current roster: @Model.CurrentPlayers.Count / @Model.MaximumPlayersCount (minimum @Model.MinimumPlayersCount)
+        </p>
+        <div class="meta-pills detail-hero__pills">
+            @if (Model.IsRosterConfirmed)
+            {
+                <span class="badge-pill badge-pill--green">Roster confirmed</span>
+            }
+            else
+            {
+                <span class="badge-pill badge-pill--gray">Roster not confirmed</span>
+            }
+        </div>
+    </article>
+
+    @if (TempData["RosterSuccess"] is string successMessage)
+    {
+        <div class="alert alert-success" role="alert">@successMessage</div>
+    }
+    @if (TempData["RosterError"] is string errorMessage)
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+
+    @if (Model.IsRosterConfirmed)
+    {
+        <div class="alert alert-warning" role="alert">
+            The roster is confirmed. Unconfirm the roster from the team's edit page before adding or removing players.
+        </div>
+    }
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Current roster</h2>
+            @if (Model.CurrentPlayers.Count == 0)
+            {
+                <p class="section-copy">No players on the roster yet.</p>
+            }
+            else
+            {
+                <ul class="compact-list roster-list">
+                    @foreach (var player in Model.CurrentPlayers)
+                    {
+                        <li class="roster-list__item">
+                            <span class="roster-list__info">
+                                <a asp-controller="Players" asp-action="Details" asp-route-id="@player.Id">@player.GamerTag</a>
+                                <span class="badge-pill badge-pill--cyan">@player.Role</span>
+                            </span>
+                            <form method="post" asp-controller="Teams" asp-action="RemovePlayer" asp-route-id="@Model.TeamId" class="roster-list__form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="playerId" value="@player.Id" />
+                                <button type="submit" class="btn btn-secondary btn-sm" disabled="@(Model.IsRosterConfirmed ? "disabled" : null)" aria-label="Remove @player.GamerTag from roster">Remove</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Add player</h2>
+                @if (Model.AvailablePlayers.Count == 0)
+                {
+                    <p class="section-copy">No available players to add.</p>
+                }
+                else
+                {
+                    <ul class="compact-list roster-list">
+                        @foreach (var player in Model.AvailablePlayers)
+                        {
+                            <li class="roster-list__item">
+                                <span class="roster-list__info">
+                                    <a asp-controller="Players" asp-action="Details" asp-route-id="@player.Id">@player.GamerTag</a>
+                                    <span class="badge-pill badge-pill--cyan">@player.Role</span>
+                                </span>
+                                <form method="post" asp-controller="Teams" asp-action="AddPlayer" asp-route-id="@Model.TeamId" class="roster-list__form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="playerId" value="@player.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm" disabled="@(Model.IsRosterConfirmed ? "disabled" : null)" aria-label="Add @player.GamerTag to roster">Add</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        </aside>
+    </div>
+
+    <div class="form-actions">
+        <a asp-action="Details" asp-route-id="@Model.TeamId" class="btn btn-secondary">Back to team</a>
+    </div>
+</section>

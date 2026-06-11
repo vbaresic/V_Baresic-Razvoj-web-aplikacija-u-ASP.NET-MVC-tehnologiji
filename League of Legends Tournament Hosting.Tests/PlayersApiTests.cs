@@ -88,6 +88,34 @@ namespace League_of_Legends_Tournament_Hosting.Tests
         }
 
         [Fact]
+        public async Task UpdatePlayer_NonExistentId_ReturnsNotFound()
+        {
+            var request = new PlayerRequest
+            {
+                Name = "Ghost Player",
+                GamerTag = "GhostGamerTag",
+                Role = PlayerRole.Player,
+                PreferredPosition = Position.MidLane,
+                SecondaryPosition = Position.TopLane,
+                JoinedAt = new DateTime(2025, 1, 1),
+                SummonerName = "GhostSummoner",
+                RiotTag = "EUW1",
+                Region = Region.EUW,
+                LeagueTier = LeagueTier.Gold
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/players/999999", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeletePlayer_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/players/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
         public async Task CreatePlayer_InvalidData_ReturnsBadRequest()
         {
             var invalidRequest = new PlayerRequest

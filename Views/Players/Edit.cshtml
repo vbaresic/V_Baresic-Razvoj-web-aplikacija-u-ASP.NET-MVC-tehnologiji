@@ -3,73 +3,91 @@
     ViewData["Title"] = "Edit Player";
 }
 
-<section class="form-page">
-    <div class="content-card">
+<section class="form-page form-page--edit">
+    <div class="form-header">
         <h1>Edit Player</h1>
-        <form asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <p class="section-copy">Update player information and account details.</p>
+    </div>
+
+    <article class="content-card form-card">
+        <form asp-action="Edit" method="post" class="ajax-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            @Html.AntiForgeryToken()
+
             <input type="hidden" asp-for="Id" />
+
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control form-input" />
+                <span asp-validation-for="Name" class="form-error"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="GamerTag" class="control-label"></label>
-                <input asp-for="GamerTag" class="form-control" />
-                <span asp-validation-for="GamerTag" class="text-danger"></span>
+                <label asp-for="GamerTag" class="form-label"></label>
+                <input asp-for="GamerTag" class="form-control form-input" />
+                <span asp-validation-for="GamerTag" class="form-error"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Role" class="control-label"></label>
+                <label asp-for="Role" class="form-label"></label>
                 @Html.DropDownListFor(m => m.Role, Html.GetEnumSelectList<PlayerRole>(), "Select Role", new { @class = "form-control" })
-                <span asp-validation-for="Role" class="text-danger"></span>
+                <span asp-validation-for="Role" class="form-error"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="PreferredPosition" class="control-label"></label>
+                <label asp-for="PreferredPosition" class="form-label"></label>
                 @Html.DropDownListFor(m => m.PreferredPosition, Html.GetEnumSelectList<Position>(), "Select Position", new { @class = "form-control" })
-                <span asp-validation-for="PreferredPosition" class="text-danger"></span>
+                <span asp-validation-for="PreferredPosition" class="form-error"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="SecondaryPosition" class="control-label"></label>
+                <label asp-for="SecondaryPosition" class="form-label"></label>
                 @Html.DropDownListFor(m => m.SecondaryPosition, Html.GetEnumSelectList<Position>(), "Select Position", new { @class = "form-control" })
-                <span asp-validation-for="SecondaryPosition" class="text-danger"></span>
+                <span asp-validation-for="SecondaryPosition" class="form-error"></span>
             </div>
+
             @await Html.PartialAsync("_DateTimePicker", (DateTime?)Model.JoinedAt, new ViewDataDictionary(ViewData) {
                 { "FieldName", "JoinedAt" },
                 { "Label", Html.DisplayNameFor(m => m.JoinedAt) },
                 { "Required", false }
             })
+
             <div class="form-group">
-                <label asp-for="AccountInformation.SummonerName" class="control-label"></label>
-                <input asp-for="AccountInformation.SummonerName" class="form-control" />
-                <span asp-validation-for="AccountInformation.SummonerName" class="text-danger"></span>
+                <label asp-for="AccountInformation.SummonerName" class="form-label"></label>
+                <input asp-for="AccountInformation.SummonerName" class="form-control form-input" />
+                <span asp-validation-for="AccountInformation.SummonerName" class="form-error"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="AccountInformation.RiotTag" class="control-label"></label>
-                <input asp-for="AccountInformation.RiotTag" class="form-control" />
-                <span asp-validation-for="AccountInformation.RiotTag" class="text-danger"></span>
+                <label asp-for="AccountInformation.RiotTag" class="form-label"></label>
+                <input asp-for="AccountInformation.RiotTag" class="form-control form-input" />
+                <span asp-validation-for="AccountInformation.RiotTag" class="form-error"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="AccountInformation.Region" class="control-label"></label>
+                <label asp-for="AccountInformation.Region" class="form-label"></label>
                 @Html.DropDownListFor(m => m.AccountInformation.Region, Html.GetEnumSelectList<Region>(), "Select Region", new { @class = "form-control" })
-                <span asp-validation-for="AccountInformation.Region" class="text-danger"></span>
+                <span asp-validation-for="AccountInformation.Region" class="form-error"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="AccountInformation.LeagueTier" class="control-label"></label>
+                <label asp-for="AccountInformation.LeagueTier" class="form-label"></label>
                 @Html.DropDownListFor(m => m.AccountInformation.LeagueTier, Html.GetEnumSelectList<LeagueTier>(), "Select Tier", new { @class = "form-control" })
-                <span asp-validation-for="AccountInformation.LeagueTier" class="text-danger"></span>
+                <span asp-validation-for="AccountInformation.LeagueTier" class="form-error"></span>
             </div>
+
             <div class="form-actions">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <button type="submit" class="btn btn-primary">Save Changes</button>
                 <a asp-action="Index" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
-    </div>
+    </article>
 </section>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/form-validation.js"></script>
     <script src="~/js/date-time-picker.js"></script>
 }

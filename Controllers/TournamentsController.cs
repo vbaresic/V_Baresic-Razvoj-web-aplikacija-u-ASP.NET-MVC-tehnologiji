@@ -412,6 +412,191 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
             return Ok();
         }
 
+        [Route("prijave/{id:int}")]
+        [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> Entries(int id)
+        {
+            var tournament = await _dbContext.Tournaments
+                .Include(t => t.TeamsList)
+                .Include(t => t.SponsorsList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (tournament is null)
+            {
+                return NotFound();
+            }
+
+            SetBreadcrumbs(
+                new BreadcrumbItem("Home", Url.Action("Index", "Home")),
+                new BreadcrumbItem("Tournaments", Url.Action(nameof(Index))),
+                new BreadcrumbItem(tournament.Name, Url.Action(nameof(Details), new { id = tournament.Id })),
+                new BreadcrumbItem("Entries", null));
+
+            var registeredTeamIds = tournament.TeamsList.Select(t => t.Id).ToHashSet();
+            var availableTeams = await _dbContext.Teams
+                .Where(t => !registeredTeamIds.Contains(t.Id))
+                .OrderBy(t => t.Name)
+                .ToListAsync();
+
+            var sponsorIds = tournament.SponsorsList.Select(s => s.Id).ToHashSet();
+            var availableSponsors = await _dbContext.Sponsors
+                .Where(s => !sponsorIds.Contains(s.Id))
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            var viewModel = new TournamentEntriesViewModel(
+                tournament.Id,
+                tournament.Name,
+                tournament.Status,
+                tournament.TeamsList.OrderBy(t => t.Name).ToList(),
+                availableTeams,
+                tournament.SponsorsList.OrderBy(s => s.Name).ToList(),
+                availableSponsors);
+
+            return View(viewModel);
+        }
+
+        [Route("prijave/{id:int}/dodaj-momcad")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> AddTeam(int id, int teamId)
+        {
+            var tournament = await _dbContext.Tournaments
+                .Include(t => t.TeamsList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (tournament is null)
+            {
+                return NotFound();
+            }
+
+            var team = await _dbContext.Teams.FindAsync(teamId);
+            if (team is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                tournament.RegisterTeam(team);
+                await _dbContext.SaveChangesAsync();
+                TempData["EntriesSuccess"] = $"{team.Name} registered for the tournament.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["EntriesError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Entries), new { id });
+        }
+
+        [Route("prijave/{id:int}/ukloni-momcad")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> RemoveTeam(int id, int teamId)
+        {
+            var tournament = await _dbContext.Tournaments
+                .Include(t => t.TeamsList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (tournament is null)
+            {
+                return NotFound();
+            }
+
+            var team = tournament.TeamsList.FirstOrDefault(t => t.Id == teamId);
+            if (team is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                tournament.RemoveTeam(team);
+                await _dbContext.SaveChangesAsync();
+                TempData["EntriesSuccess"] = $"{team.Name} removed from the tournament.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["EntriesError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Entries), new { id });
+        }
+
+        [Route("prijave/{id:int}/dodaj-sponzora")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> AddSponsor(int id, int sponsorId)
+        {
+            var tournament = await _dbContext.Tournaments
+                .Include(t => t.SponsorsList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (tournament is null)
+            {
+                return NotFound();
+            }
+
+            var sponsor = await _dbContext.Sponsors.FindAsync(sponsorId);
+            if (sponsor is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                tournament.AddSponsor(sponsor);
+                await _dbContext.SaveChangesAsync();
+                TempData["EntriesSuccess"] = $"{sponsor.Name} added as a sponsor.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["EntriesError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Entries), new { id });
+        }
+
+        [Route("prijave/{id:int}/ukloni-sponzora")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> RemoveSponsor(int id, int sponsorId)
+        {
+            var tournament = await _dbContext.Tournaments
+                .Include(t => t.SponsorsList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (tournament is null)
+            {
+                return NotFound();
+            }
+
+            var sponsor = tournament.SponsorsList.FirstOrDefault(s => s.Id == sponsorId);
+            if (sponsor is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                tournament.RemoveSponsor(sponsor);
+                await _dbContext.SaveChangesAsync();
+                TempData["EntriesSuccess"] = $"{sponsor.Name} removed from the tournament.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["EntriesError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Entries), new { id });
+        }
+
         private bool TournamentExists(int id)
         {
             return _dbContext.Tournaments.Any(e => e.Id == id);

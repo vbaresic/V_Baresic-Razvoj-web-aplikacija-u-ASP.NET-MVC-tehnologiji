@@ -49,6 +49,12 @@
                             </li>
                         }
                     </ul>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                    {
+                        <div class="form-actions">
+                            <a asp-controller="Teams" asp-action="Roster" asp-route-id="@Model.Id" class="btn btn-secondary btn-sm">Manage roster</a>
+                        </div>
+                    }
                 </div>
             </div>
         </article>

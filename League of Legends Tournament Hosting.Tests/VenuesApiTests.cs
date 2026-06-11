@@ -82,6 +82,33 @@ namespace League_of_Legends_Tournament_Hosting.Tests
         }
 
         [Fact]
+        public async Task UpdateVenue_NonExistentId_ReturnsNotFound()
+        {
+            var request = new VenueRequest
+            {
+                Name = "Ghost Arena",
+                Address = "123 Ghost Street",
+                City = "Zagreb",
+                Capacity = 5000,
+                IsAvailable = true,
+                BookingFrom = new DateTime(2026, 1, 1),
+                BookingTo = new DateTime(2026, 12, 31),
+                ContactEmail = "ghost@example.com",
+                ContactPhone = "+385123456789"
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/venues/999999", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteVenue_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/venues/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
         public async Task CreateVenue_InvalidData_ReturnsBadRequest()
         {
             var invalidRequest = new VenueRequest

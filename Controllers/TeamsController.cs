@@ -229,6 +229,112 @@ namespace League_of_Legends_Tournament_Hosting.Controllers
             return Json(searchResults);
         }
 
+        [Route("sastav/{id:int}")]
+        [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> Roster(int id)
+        {
+            var team = await _dbContext.Teams
+                .Include(t => t.PlayersList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (team is null)
+            {
+                return NotFound();
+            }
+
+            SetBreadcrumbs(
+                new BreadcrumbItem("Home", Url.Action("Index", "Home")),
+                new BreadcrumbItem("Teams", Url.Action(nameof(Index))),
+                new BreadcrumbItem(team.Name, Url.Action(nameof(Details), new { id = team.Id })),
+                new BreadcrumbItem("Roster", null));
+
+            var rosterPlayerIds = team.PlayersList.Select(p => p.Id).ToHashSet();
+            var availablePlayers = await _dbContext.Players
+                .Where(p => !rosterPlayerIds.Contains(p.Id))
+                .OrderBy(p => p.GamerTag)
+                .ToListAsync();
+
+            var viewModel = new TeamRosterViewModel(
+                team.Id,
+                team.Name,
+                team.IsRosterConfirmed,
+                team.PlayersList.OrderBy(p => p.GamerTag).ToList(),
+                availablePlayers);
+
+            return View(viewModel);
+        }
+
+        [Route("sastav/{id:int}/dodaj")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> AddPlayer(int id, int playerId)
+        {
+            var team = await _dbContext.Teams
+                .Include(t => t.PlayersList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (team is null)
+            {
+                return NotFound();
+            }
+
+            var player = await _dbContext.Players.FindAsync(playerId);
+            if (player is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                team.AddPlayer(player);
+                await _dbContext.SaveChangesAsync();
+                TempData["RosterSuccess"] = $"{player.GamerTag} added to the roster.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["RosterError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Roster), new { id });
+        }
+
+        [Route("sastav/{id:int}/ukloni")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> RemovePlayer(int id, int playerId)
+        {
+            var team = await _dbContext.Teams
+                .Include(t => t.PlayersList)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (team is null)
+            {
+                return NotFound();
+            }
+
+            var player = team.PlayersList.FirstOrDefault(p => p.Id == playerId);
+            if (player is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                team.RemovePlayer(player);
+                await _dbContext.SaveChangesAsync();
+                TempData["RosterSuccess"] = $"{player.GamerTag} removed from the roster.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["RosterError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Roster), new { id });
+        }
+
         private bool TeamExists(int id)
         {
             return _dbContext.Teams.Any(e => e.Id == id);

@@ -69,6 +69,17 @@
                     }
                 </div>
             </section>
+
+            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            {
+                <section class="content-card detail-panel">
+                    <h2>Manage entries</h2>
+                    <p class="section-copy">Manage registered teams and sponsors for this tournament.</p>
+                    <div class="form-actions">
+                        <a asp-controller="Tournaments" asp-action="Entries" asp-route-id="@Model.Id" class="btn btn-secondary btn-sm">Manage entries</a>
+                    </div>
+                </section>
+            }
         </aside>
     </div>
 </section>

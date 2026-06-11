@@ -79,6 +79,28 @@ namespace League_of_Legends_Tournament_Hosting.Tests
         }
 
         [Fact]
+        public async Task UpdateCoach_NonExistentId_ReturnsNotFound()
+        {
+            var request = new CoachRequest
+            {
+                Name = "Ghost Coach",
+                GamerTag = "GhostCoachTag",
+                HiredAt = new DateTime(2024, 1, 1),
+                YearsOfExperience = 5
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/coaches/999999", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteCoach_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/coaches/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
         public async Task CreateCoach_InvalidData_ReturnsBadRequest()
         {
             var invalidRequest = new CoachRequest

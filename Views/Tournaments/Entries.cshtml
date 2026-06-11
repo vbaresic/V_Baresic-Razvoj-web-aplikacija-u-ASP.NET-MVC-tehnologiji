@@ -1,0 +1,150 @@
+@model League_of_Legends_Tournament_Hosting.ViewModels.TournamentEntriesViewModel
+@using League_of_Legends_Tournament_Hosting.Models
+@{
+    ViewData["Title"] = $"Entries — {Model.TournamentName}";
+    var statusClass = Model.Status switch
+    {
+        TournamentStatus.Upcoming => "status-upcoming",
+        TournamentStatus.Ongoing => "status-ongoing",
+        TournamentStatus.Completed => "status-completed",
+        _ => "status-cancelled"
+    };
+}
+
+<section class="detail-page detail-page--tournament entries-page">
+    <article class="content-card detail-hero detail-hero--purple">
+        <div class="detail-hero__accent"></div>
+        <p class="eyebrow">Entries management</p>
+        <h1>@Model.TournamentName</h1>
+        <p class="detail-hero__subtitle">
+            Registered teams: @Model.RegisteredTeams.Count / @Model.MaximumTeamsCount
+        </p>
+        <div class="meta-pills detail-hero__pills">
+            <span class="badge-pill @statusClass">@Model.Status</span>
+        </div>
+    </article>
+
+    @if (TempData["EntriesSuccess"] is string successMessage)
+    {
+        <div class="alert alert-success" role="alert">@successMessage</div>
+    }
+    @if (TempData["EntriesError"] is string errorMessage)
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+
+    @if (Model.Status != TournamentStatus.Upcoming)
+    {
+        <div class="alert alert-warning" role="alert">
+            Team registration changes are only allowed while the tournament is "Upcoming". Sponsors can be managed regardless of status.
+        </div>
+    }
+
+    <div class="detail-layout detail-layout--rich">
+        <article class="content-card detail-panel detail-panel--primary">
+            <h2>Registered teams (@Model.RegisteredTeams.Count / @Model.MaximumTeamsCount)</h2>
+            @if (Model.RegisteredTeams.Count == 0)
+            {
+                <p class="section-copy">No teams registered yet.</p>
+            }
+            else
+            {
+                <ul class="compact-list roster-list">
+                    @foreach (var team in Model.RegisteredTeams)
+                    {
+                        <li class="roster-list__item">
+                            <span class="roster-list__info">
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@team.Id">@team.Name</a>
+                            </span>
+                            <form method="post" asp-controller="Tournaments" asp-action="RemoveTeam" asp-route-id="@Model.TournamentId" class="roster-list__form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="teamId" value="@team.Id" />
+                                <button type="submit" class="btn btn-secondary btn-sm" disabled="@(Model.Status != TournamentStatus.Upcoming ? "disabled" : null)" aria-label="Remove @team.Name from tournament">Remove</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+
+            <h2>Available teams</h2>
+            @if (Model.AvailableTeams.Count == 0)
+            {
+                <p class="section-copy">No available teams to add.</p>
+            }
+            else
+            {
+                <ul class="compact-list roster-list">
+                    @foreach (var team in Model.AvailableTeams)
+                    {
+                        <li class="roster-list__item">
+                            <span class="roster-list__info">
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@team.Id">@team.Name</a>
+                            </span>
+                            <form method="post" asp-controller="Tournaments" asp-action="AddTeam" asp-route-id="@Model.TournamentId" class="roster-list__form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="teamId" value="@team.Id" />
+                                <button type="submit" class="btn btn-primary btn-sm" disabled="@(Model.Status != TournamentStatus.Upcoming ? "disabled" : null)" aria-label="Add @team.Name to tournament">Add</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+        </article>
+
+        <aside class="detail-side">
+            <section class="content-card detail-panel">
+                <h2>Sponsors</h2>
+                @if (Model.Sponsors.Count == 0)
+                {
+                    <p class="section-copy">No sponsors yet.</p>
+                }
+                else
+                {
+                    <ul class="compact-list roster-list">
+                        @foreach (var sponsor in Model.Sponsors)
+                        {
+                            <li class="roster-list__item">
+                                <span class="roster-list__info">
+                                    <a asp-controller="Sponsors" asp-action="Details" asp-route-id="@sponsor.Id">@sponsor.Name</a>
+                                </span>
+                                <form method="post" asp-controller="Tournaments" asp-action="RemoveSponsor" asp-route-id="@Model.TournamentId" class="roster-list__form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="sponsorId" value="@sponsor.Id" />
+                                    <button type="submit" class="btn btn-secondary btn-sm" aria-label="Remove @sponsor.Name from tournament">Remove</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <h2>Available sponsors</h2>
+                @if (Model.AvailableSponsors.Count == 0)
+                {
+                    <p class="section-copy">No available sponsors to add.</p>
+                }
+                else
+                {
+                    <ul class="compact-list roster-list">
+                        @foreach (var sponsor in Model.AvailableSponsors)
+                        {
+                            <li class="roster-list__item">
+                                <span class="roster-list__info">
+                                    <a asp-controller="Sponsors" asp-action="Details" asp-route-id="@sponsor.Id">@sponsor.Name</a>
+                                </span>
+                                <form method="post" asp-controller="Tournaments" asp-action="AddSponsor" asp-route-id="@Model.TournamentId" class="roster-list__form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="sponsorId" value="@sponsor.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm" aria-label="Add @sponsor.Name to tournament">Add</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        </aside>
+    </div>
+
+    <div class="form-actions">
+        <a asp-action="Details" asp-route-id="@Model.TournamentId" class="btn btn-secondary">Back to tournament</a>
+    </div>
+</section>

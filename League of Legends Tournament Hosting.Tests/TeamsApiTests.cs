@@ -116,5 +116,48 @@ namespace League_of_Legends_Tournament_Hosting.Tests
             var response = await _client.GetAsync("/api/teams/999999");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task UpdateTeam_NonExistentId_ReturnsNotFound()
+        {
+            var (coachId, managerId) = await CreatePrerequisitesAsync();
+
+            var request = new TeamRequest
+            {
+                Name = "Ghost Team",
+                CoachId = coachId,
+                ManagerId = managerId,
+                RegisteredAt = new DateTime(2025, 1, 1),
+                IsRosterConfirmed = false
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/teams/999999", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteTeam_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/teams/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateTeam_InvalidData_ReturnsBadRequest()
+        {
+            var (coachId, managerId) = await CreatePrerequisitesAsync();
+
+            var request = new TeamRequest
+            {
+                Name = "A", // too short
+                CoachId = coachId,
+                ManagerId = managerId,
+                RegisteredAt = new DateTime(2025, 1, 1),
+                IsRosterConfirmed = false
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/teams", request);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }

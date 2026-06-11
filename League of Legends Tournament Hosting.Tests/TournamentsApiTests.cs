@@ -130,6 +130,59 @@ namespace League_of_Legends_Tournament_Hosting.Tests
         }
 
         [Fact]
+        public async Task UpdateTournament_NonExistentId_ReturnsNotFound()
+        {
+            var venueId = await CreateVenueAsync();
+
+            var request = new TournamentRequest
+            {
+                Name = "Ghost Tournament",
+                Description = "A tournament that does not exist.",
+                Type = TournamentType.Preliminary,
+                Format = TournamentFormat.Online,
+                Status = TournamentStatus.Upcoming,
+                PrizePool = 50000m,
+                StartDate = new DateTime(2026, 6, 1),
+                EndDate = new DateTime(2026, 6, 10),
+                RegistrationDeadline = new DateTime(2026, 5, 1),
+                VenueId = venueId
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/tournaments/999999", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteTournament_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/tournaments/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateTournament_InvalidData_ReturnsBadRequest()
+        {
+            var venueId = await CreateVenueAsync();
+
+            var request = new TournamentRequest
+            {
+                Name = "A", // too short (min 2)
+                Description = "Hi", // too short (min 5)
+                Type = TournamentType.Preliminary,
+                Format = TournamentFormat.Online,
+                Status = TournamentStatus.Upcoming,
+                PrizePool = -100m, // out of range
+                StartDate = new DateTime(2026, 6, 1),
+                EndDate = new DateTime(2026, 6, 10),
+                RegistrationDeadline = new DateTime(2026, 5, 1),
+                VenueId = venueId
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/tournaments", request);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
         public async Task DocumentUpload_WorksCorrectly()
         {
             var venueId = await CreateVenueAsync();

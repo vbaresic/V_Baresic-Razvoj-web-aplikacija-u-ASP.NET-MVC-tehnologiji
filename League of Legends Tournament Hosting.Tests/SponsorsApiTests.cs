@@ -78,6 +78,31 @@ namespace League_of_Legends_Tournament_Hosting.Tests
         }
 
         [Fact]
+        public async Task UpdateSponsor_NonExistentId_ReturnsNotFound()
+        {
+            var request = new SponsorRequest
+            {
+                Name = "Ghost Sponsor",
+                Website = "https://ghost.example.com",
+                ContactEmail = "ghost@example.com",
+                ContactPhone = "+385987654321",
+                SponsorshipAmount = 10000m,
+                ContractStart = new DateTime(2026, 1, 1),
+                ContractEnd = new DateTime(2026, 12, 31)
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/sponsors/999999", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteSponsor_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/sponsors/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
         public async Task CreateSponsor_InvalidData_ReturnsBadRequest()
         {
             var invalidRequest = new SponsorRequest

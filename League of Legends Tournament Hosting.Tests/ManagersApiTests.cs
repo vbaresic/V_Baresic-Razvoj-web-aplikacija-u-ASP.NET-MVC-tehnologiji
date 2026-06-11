@@ -70,6 +70,27 @@ namespace League_of_Legends_Tournament_Hosting.Tests
         }
 
         [Fact]
+        public async Task UpdateManager_NonExistentId_ReturnsNotFound()
+        {
+            var request = new ManagerRequest
+            {
+                Name = "Ghost Manager",
+                HiredAt = new DateTime(2023, 5, 1),
+                YearsOfExperience = 3
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/managers/999999", request);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteManager_NonExistentId_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/api/managers/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
         public async Task CreateManager_InvalidData_ReturnsBadRequest()
         {
             var invalidRequest = new ManagerRequest
